@@ -20,9 +20,11 @@ export default function MadeBySang() {
 
       // ─── Helpers ─────────────────────────────────────────────────────────────
       function getSize() {
+        const rect = canvas.getBoundingClientRect();
+
         return {
-          w: window.innerWidth,
-          h: window.innerHeight,
+          w: Math.max(1, Math.round(rect.width || window.innerWidth)),
+          h: Math.max(1, Math.round(rect.height || window.innerHeight)),
         };
       }
 
@@ -30,6 +32,7 @@ export default function MadeBySang() {
         const dpr = window.devicePixelRatio || 1;
         const off = document.createElement("canvas");
         const padPx = 20 * dpr;
+        const text = "MADEBY©SANG";
         off.width = w * dpr;
         off.height = h * dpr;
         const ctx = off.getContext("2d");
@@ -38,17 +41,36 @@ export default function MadeBySang() {
         ctx.fillRect(0, 0, off.width, off.height);
 
         const maxW = off.width - padPx * 2;
-        let fontSize = Math.floor(off.height * 0.18);
+        const maxH = off.height - padPx * 2;
+        let minSize = 10;
+        let maxSize = off.height;
+        let fontSize = minSize;
+
+        for (let i = 0; i < 24; i++) {
+          const nextSize = Math.floor((minSize + maxSize) / 2);
+          ctx.font = `900 ${nextSize}px Saans`;
+          const metrics = ctx.measureText(text);
+          const textH =
+            metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+
+          if (metrics.width <= maxW && textH <= maxH) {
+            fontSize = nextSize;
+            minSize = nextSize + 1;
+          } else {
+            maxSize = nextSize - 1;
+          }
+        }
+
         ctx.font = `900 ${fontSize}px Saans`;
-        while (ctx.measureText("MADEBY©SANG").width > maxW && fontSize > 10) {
-          fontSize--;
+        while (ctx.measureText(text).width > maxW && fontSize > 10) {
+          fontSize -= 1;
           ctx.font = `900 ${fontSize}px Saans`;
         }
 
         ctx.fillStyle = "#111111";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("MADEBY©SANG", off.width / 2, off.height / 2);
+        ctx.fillText(text, off.width / 2, off.height / 2);
 
         return off;
       }
