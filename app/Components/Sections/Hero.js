@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-export default function MadeBySang() {
+export default function Hero() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -75,7 +75,12 @@ export default function MadeBySang() {
         return off;
       }
 
-      function sizePlaneToViewport(mesh, camera, viewportWidth, viewportHeight) {
+      function sizePlaneToViewport(
+        mesh,
+        camera,
+        viewportWidth,
+        viewportHeight,
+      ) {
         const distance = camera.position.z;
         const visibleHeight =
           2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * distance;
@@ -108,14 +113,14 @@ export default function MadeBySang() {
 
           vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
           float pixelDistanceToMouse = length(pixelToMouseDirection);
-          float strength = smoothstep(0.15, 0.0, pixelDistanceToMouse);
+          float strength = smoothstep(0.2, 0.0, pixelDistanceToMouse);
 
           vec2 uvOffset = strength * -mouseDirection * 0.3;
           vec2 uv = vUv - uvOffset;
 
-          vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+          vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.008, 0.0));
           vec4 colorG = texture2D(u_texture, uv);
-          vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+          vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.008, 0.0));
 
           gl_FragColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
         }

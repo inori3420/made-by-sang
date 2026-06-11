@@ -1,9 +1,9 @@
-import MadeBySang from "./Components/Sections/MadeBySang";
+import Hero from "./Components/Sections/Hero";
 
 export default function Home() {
   return (
     <>
-      <MadeBySang />
+      <Hero />
     </>
   );
 }
