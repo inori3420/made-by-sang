@@ -114,11 +114,7 @@ export default function Navbar() {
         });
 
         timeline
-          .set(
-            [menu, overlay],
-            { visibility: "visible" },
-            0,
-          )
+          .set([menu, overlay], { visibility: "visible" }, 0)
           .set(overlay, { pointerEvents: "auto" }, 0)
           .to(
             menu,
@@ -343,7 +339,7 @@ export default function Navbar() {
               <p className={styles.mobileMenuDetailLabel}>Socials</p>
               <div className={styles.mobileMenuDetailLinks}>
                 <a
-                  href="https://www.instagram.com/"
+                  href="https://www.instagram.com/sun_tnhut"
                   target="_blank"
                   rel="noreferrer"
                   className={styles.mobileMenuDetailLink}
@@ -352,7 +348,7 @@ export default function Navbar() {
                   <RiArrowRightUpLine aria-hidden="true" size={16} />
                 </a>
                 <a
-                  href="https://www.linkedin.com/"
+                  href="https://www.linkedin.com/in/suntnhut/"
                   target="_blank"
                   rel="noreferrer"
                   className={styles.mobileMenuDetailLink}

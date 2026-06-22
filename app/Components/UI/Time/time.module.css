@@ -1,0 +1,7 @@
+.time {
+  color: var(--text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  font-weight: var(--font-weight-medium);
+}

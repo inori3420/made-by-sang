@@ -1,0 +1,18 @@
+.meta {
+  position: absolute;
+  z-index: 1;
+  right: var(--page-padding-x);
+  bottom: var(--space-lg);
+  left: var(--page-padding-x);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 47.9375rem) {
+  .meta {
+    bottom: var(--space-md);
+  }
+}
