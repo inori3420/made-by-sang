@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import Button from "../Button/Button";
 import Navlink from "../Navlink/Navlink";
@@ -18,7 +18,7 @@ export default function Navbar() {
   const navbarRef = useRef(null);
   const globeRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const navbar = navbarRef.current;
     const globe = globeRef.current;
     const circles = globe.querySelectorAll("[data-globe-circle]");
@@ -32,17 +32,14 @@ export default function Navbar() {
         return;
       }
 
-      gsap.fromTo(
-        navbar,
-        { yPercent: -110, autoAlpha: 0 },
-        {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 0.9,
-          delay: 0.15,
-          ease: interactionEase,
-        },
-      );
+      gsap.set(navbar, { yPercent: -110, autoAlpha: 0 });
+      gsap.to(navbar, {
+        yPercent: 0,
+        autoAlpha: 1,
+        duration: 0.9,
+        delay: 0.15,
+        ease: interactionEase,
+      });
     }, navbar);
 
     if (circles.length < 6 || reduceMotion) {
@@ -121,7 +118,14 @@ export default function Navbar() {
   const globeCircles = Array.from({ length: 3 });
 
   return (
-    <header ref={navbarRef} className={styles.navbar}>
+    <header
+      ref={navbarRef}
+      className={styles.navbar}
+      style={{
+        opacity: 0,
+        visibility: "hidden",
+      }}
+    >
       <Link href="/" className={styles.logo} aria-label="Made by Sang home">
         <div ref={globeRef} className={styles.globe} aria-hidden="true">
           <div className={styles.globeBack}>
