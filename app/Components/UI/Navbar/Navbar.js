@@ -15,16 +15,39 @@ const navigation = [
 ];
 
 export default function Navbar() {
+  const navbarRef = useRef(null);
   const globeRef = useRef(null);
 
   useEffect(() => {
+    const navbar = navbarRef.current;
     const globe = globeRef.current;
     const circles = globe.querySelectorAll("[data-globe-circle]");
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (circles.length < 6 || reduceMotion) return;
+    const entranceContext = gsap.context(() => {
+      if (reduceMotion) {
+        gsap.set(navbar, { yPercent: 0, autoAlpha: 1 });
+        return;
+      }
+
+      gsap.fromTo(
+        navbar,
+        { yPercent: -110, autoAlpha: 0 },
+        {
+          yPercent: 0,
+          autoAlpha: 1,
+          duration: 0.9,
+          delay: 0.15,
+          ease: interactionEase,
+        },
+      );
+    }, navbar);
+
+    if (circles.length < 6 || reduceMotion) {
+      return () => entranceContext.revert();
+    }
 
     let cleanupScroll = () => {};
 
@@ -91,13 +114,14 @@ export default function Navbar() {
     return () => {
       cleanupScroll();
       context.revert();
+      entranceContext.revert();
     };
   }, []);
 
   const globeCircles = Array.from({ length: 3 });
 
   return (
-    <header className={styles.navbar}>
+    <header ref={navbarRef} className={styles.navbar}>
       <Link href="/" className={styles.logo} aria-label="Made by Sang home">
         <div ref={globeRef} className={styles.globe} aria-hidden="true">
           <div className={styles.globeBack}>
