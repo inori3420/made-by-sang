@@ -4,8 +4,7 @@
   align-items: center;
   overflow: hidden;
   padding: 0.375rem 0.625rem;
-  color: var(--text-secondary);
-  opacity: 0.3;
+  color: var(--text-muted);
   font-family: var(--font-family-body);
   font-size: var(--text-body);
   font-weight: var(--font-weight-semibold);
@@ -15,13 +14,16 @@
 }
 
 .active {
-  opacity: 1;
   color: var(--text-primary);
 }
 
 .navLink:hover,
 .navLink:focus-visible {
+  color: var(--text-primary);
   opacity: 1;
+  transition:
+    color 240ms var(--ease-interaction),
+    opacity 180ms var(--ease-interaction);
 }
 
 .label {

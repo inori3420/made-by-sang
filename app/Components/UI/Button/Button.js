@@ -21,6 +21,7 @@ export default function Button({
   const buttonRef = useRef(null);
   const gridRef = useRef(null);
   const reduceMotionRef = useRef(false);
+  const interactionRef = useRef(null);
   const classes = [styles.button, className].filter(Boolean).join(" ");
 
   useLayoutEffect(() => {
@@ -35,14 +36,19 @@ export default function Button({
       gsap.set(tiles, { scale: 0, transformOrigin: "center" });
     }, button);
 
-    return () => context.revert();
+    return () => {
+      interactionRef.current?.kill();
+      gsap.killTweensOf(tiles);
+      context.revert();
+    };
   }, []);
 
   function showPixels() {
     const tiles = gridRef.current.children;
 
+    interactionRef.current?.kill();
     gsap.killTweensOf(tiles);
-    gsap.to(tiles, {
+    interactionRef.current = gsap.to(tiles, {
       scale: 1.06,
       duration: reduceMotionRef.current ? 0 : 0.32,
       ease: interactionEase,
@@ -53,14 +59,18 @@ export default function Button({
         from: "start",
       },
       overwrite: "auto",
+      onComplete: () => {
+        interactionRef.current = null;
+      },
     });
   }
 
   function hidePixels() {
     const tiles = gridRef.current.children;
 
+    interactionRef.current?.kill();
     gsap.killTweensOf(tiles);
-    gsap.to(tiles, {
+    interactionRef.current = gsap.to(tiles, {
       scale: 0,
       duration: reduceMotionRef.current ? 0 : 0.28,
       ease: interactionEase,
@@ -71,6 +81,9 @@ export default function Button({
         from: "start",
       },
       overwrite: "auto",
+      onComplete: () => {
+        interactionRef.current = null;
+      },
     });
   }
 

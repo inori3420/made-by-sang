@@ -31,18 +31,192 @@
   gap: var(--space-none);
 }
 
-.action {
+.desktopAction {
   justify-self: end;
 }
 
-@media (max-width: 40rem) {
+.mobileAction,
+.mobileMenu,
+.mobileOverlay {
+  display: none;
+}
+
+@media (max-width: 47.9375rem) {
   .navbar {
+    z-index: 100;
     grid-template-columns: auto 1fr auto;
     gap: var(--space-sm);
     padding-block: var(--space-md);
   }
 
   .navigation {
-    gap: 0;
+    display: none;
+  }
+
+  .desktopAction {
+    display: none;
+  }
+
+  .mobileAction {
+    display: block;
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .menuToggle {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: var(--space-xs);
+    min-width: 5.75rem;
+  }
+
+  .menuToggle > span:last-child {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-xs);
+  }
+
+  .toggleText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    height: 1em;
+    overflow: hidden;
+    line-height: 1;
+  }
+
+  .toggleText > span {
+    flex: none;
+  }
+
+  .toggleIcon {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.32rem;
+    width: 1rem;
+  }
+
+  .toggleIcon > span {
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform-origin: center;
+  }
+
+  .mobileMenu {
+    position: fixed;
+    z-index: 80;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    width: 80vw;
+    background: var(--bg-inverse);
+    color: var(--text-inverse-primary);
+    visibility: hidden;
+    will-change: transform;
+  }
+
+  .mobileMenuInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 7.75rem var(--page-padding-x) var(--space-xl);
+    overflow: auto;
+  }
+
+  .mobileMenuList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mobileMenuLink {
+    display: block;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    color: var(--text-inverse-secondary);
+    font-family: var(--font-family-display);
+    font-size: clamp(2.25rem, 12vw, 4rem);
+    font-weight: var(--font-weight-semibold);
+    line-height: 0.9;
+    letter-spacing: var(--tracking-heading);
+    text-decoration: none;
+  }
+
+  .mobileMenuDetails {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+    margin-top: auto;
+    padding: var(--space-xl) var(--space-md) 0;
+    border-top: 1px solid var(--border-strong);
+  }
+
+  .mobileMenuDetailGroup,
+  .mobileMenuDetailLinks {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobileMenuDetailGroup {
+    gap: var(--space-xs);
+  }
+
+  .mobileMenuDetailLinks {
+    gap: var(--space-xs);
+  }
+
+  .mobileMenuDetailLabel {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--text-body-sm);
+  }
+
+  .mobileMenuDetailLink {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: var(--space-2xs);
+    color: var(--text-inverse-primary);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--text-body);
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .mobileMenuLinkActive {
+    color: var(--text-primary);
+    background: var(--brand-primary);
+  }
+
+  .mobileOverlay {
+    position: fixed;
+    z-index: 90;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    cursor: pointer;
+    overflow: clip;
+  }
+
+  .mobileOverlayDark {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 35%);
+    opacity: 0;
+  }
+
+  .menuOpen .logo {
+    color: var(--text-inverse-primary);
   }
 }
