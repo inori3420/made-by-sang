@@ -5,11 +5,22 @@
   overflow: hidden;
   padding: 0.375rem 0.625rem;
   color: var(--text-primary);
+  opacity: 0.7;
   font-family: var(--font-family-body);
   font-size: var(--text-body);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   text-decoration: none;
+  transition: opacity 240ms var(--ease-interaction);
+}
+
+.active {
+  opacity: 1;
+}
+
+.navLink:hover,
+.navLink:focus-visible {
+  opacity: 1;
 }
 
 .label {

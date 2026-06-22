@@ -1,5 +1,5 @@
+import { Metadata } from "next";
 import Hero from "./Components/Sections/Hero/Hero";
-import Navbar from "./Components/UI/Navbar/Navbar";
 
 export const metadata = {
   title: "Made by Sang",
@@ -10,7 +10,6 @@ export const metadata = {
 export default function Home() {
   return (
     <>
-      <Navbar />
       <Hero />
     </>
   );

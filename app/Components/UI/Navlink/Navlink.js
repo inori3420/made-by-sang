@@ -35,7 +35,7 @@ export default function Navlink({
       ).matches;
 
       gsap.set(shape, {
-        scaleX: isActive ? 1 : 0,
+        scaleX: 0,
         transformOrigin: "left center",
       });
     }, linkRef);
@@ -58,16 +58,14 @@ export default function Navlink({
   }
 
   function hideShape() {
-    if (!isActive) {
-      gsap.killTweensOf(shapeRef.current);
-      gsap.set(shapeRef.current, { transformOrigin: "right center" });
-      gsap.to(shapeRef.current, {
-        scaleX: 0,
-        duration: reduceMotionRef.current ? 0 : 0.42,
-        ease: interactionEase,
-        overwrite: "auto",
-      });
-    }
+    gsap.killTweensOf(shapeRef.current);
+    gsap.set(shapeRef.current, { transformOrigin: "right center" });
+    gsap.to(shapeRef.current, {
+      scaleX: 0,
+      duration: reduceMotionRef.current ? 0 : 0.42,
+      ease: interactionEase,
+      overwrite: "auto",
+    });
   }
 
   return (
