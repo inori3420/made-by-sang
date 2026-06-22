@@ -1,0 +1,177 @@
+@font-face {
+  font-family: "Saans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Saans-TRIAL-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Saans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Saans-TRIAL-Medium.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Saans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/Saans-TRIAL-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Saans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/Saans-TRIAL-Bold.woff2") format("woff2");
+}
+
+:root {
+  /* ========================================
+     COLORS - PRIMITIVE TOKENS
+  ======================================== */
+
+  --brand-300: oklch(0.8972 0.1786 126.67);
+  --brand-400: oklch(0.8493 0.2073 128.85);
+
+  --neutral-50: oklch(0.9848 0.0013 106.42);
+  --neutral-200: oklch(0.9699 0.0013 106.42);
+  --neutral-400: oklch(0.7161 0.0091 56.26);
+  --neutral-600: oklch(0.4444 0.0096 73.64);
+  --neutral-800: oklch(0.2685 0.0063 34.3);
+  --neutral-950: oklch(0.1469 0.0041 49.25);
+
+  /* ========================================
+     COLORS - SEMANTIC TOKENS
+  ======================================== */
+
+  /* Backgrounds */
+  --bg-primary: var(--neutral-50);
+  --bg-secondary: var(--neutral-200);
+  --bg-inverse: var(--neutral-950);
+
+  /* Text */
+  --text-primary: var(--neutral-950);
+  --text-secondary: var(--neutral-600);
+  --text-muted: var(--neutral-400);
+
+  --text-inverse-primary: var(--neutral-50);
+  --text-inverse-secondary: var(--neutral-200);
+
+  /* Borders */
+  --border-subtle: var(--neutral-200);
+  --border-default: var(--neutral-400);
+  --border-strong: var(--neutral-600);
+
+  /* Brand */
+  --brand-primary: var(--brand-400);
+  --brand-secondary: var(--brand-300);
+
+  /* Interactive */
+  --button-primary-bg: var(--brand-primary);
+  --button-primary-text: var(--neutral-950);
+
+  --button-secondary-bg: var(--neutral-950);
+  --button-secondary-text: var(--neutral-50);
+
+  /* Motion */
+  --ease-interaction: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* ========================================
+     LAYOUT
+  ======================================== */
+
+  /* Fixed page gutter */
+  --page-padding-x: 1.25rem; /* 20px */
+
+  /* Section spacing */
+  --section-padding-y: 5rem; /* 80px */
+
+  /* Max content width */
+  --content-width: calc(100vw - (var(--page-padding-x) * 2));
+
+  /* ========================================
+     SPACING SYSTEM
+  ======================================== */
+
+  --space-2xs: 0.25rem; /* 4 */
+  --space-xs: 0.5rem; /* 8 */
+  --space-sm: 0.75rem; /* 12 */
+  --space-md: 1rem; /* 16 */
+  --space-lg: 1.25rem; /* 20 */
+  --space-xl: 1.5rem; /* 24 */
+  --space-2xl: 2rem; /* 32 */
+  --space-3xl: 3rem; /* 48 */
+  --space-4xl: 4rem; /* 64 */
+  --space-5xl: 5rem; /* 80 */
+  --space-6xl: 7.5rem; /* 120 */
+  --space-7xl: 10rem; /* 160 */
+
+  /* ========================================
+     TYPOGRAPHY
+  ======================================== */
+
+  --font-family-body: "Saans", sans-serif;
+  --font-family-display: "Saans", sans-serif;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* ========================================
+     FLUID TYPE SCALE
+  ======================================== */
+
+  /*
+    Display should scale with viewport
+    but remain inside page padding.
+  */
+
+  --text-display: clamp(5rem, calc(100vw * 0.16), 18rem);
+
+  --text-h1: clamp(6rem, 8vw, 10rem);
+  --text-h2: clamp(3rem, 4vw, 4.5rem);
+  --text-h3: clamp(2.5rem, 3.5vw, 4rem);
+  --text-h4: clamp(2rem, 2.5vw, 2.5rem);
+  --text-h5: clamp(1.5rem, 2vw, 2rem);
+
+  --text-body-lg: 1.25rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-caption: 0.75rem;
+
+  /* ========================================
+     LINE HEIGHT
+  ======================================== */
+
+  --leading-display: 0.9;
+  --leading-heading: 1;
+  --leading-body: 1.5;
+
+  /* ========================================
+     LETTER SPACING
+  ======================================== */
+
+  --tracking-display: -0.06em;
+  --tracking-heading: -0.04em;
+  --tracking-body: 0em;
+
+  /* ========================================
+     BORDER RADIUS
+  ======================================== */
+
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-full: 999rem;
+}
+
+html,
+body {
+  font-family: var(--font-family-body);
+}

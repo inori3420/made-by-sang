@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import styles from "./heading.module.css";
+import { gsap, interactionEase } from "../../../lib/animation";
 import * as THREE from "three";
 
-export default function Hero() {
+export default function Heading() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -11,11 +13,13 @@ export default function Hero() {
     if (!canvas) return;
 
     let cleanup;
+    let cancelled = false;
 
     async function init() {
       // ─── Load font ───────────────────────────────────────────────────────────
       const font = new FontFace("Saans", "url(/fonts/Saans-TRIAL-Bold.woff2)");
       await font.load();
+      if (cancelled) return;
       document.fonts.add(font);
 
       // ─── Helpers ─────────────────────────────────────────────────────────────
@@ -104,10 +108,16 @@ export default function Hero() {
         uniform vec2 u_mouse;
         uniform vec2 u_prevMouse;
         uniform float u_aberrationIntensity;
+        uniform float u_reveal;
+
+        float random(vec2 position) {
+          return fract(sin(dot(position, vec2(12.9898, 78.233))) * 43758.5453);
+        }
 
         void main() {
-          vec2 gridUV = floor(vUv * vec2(30.0, 30.0)) / vec2(30.0, 30.0);
-          vec2 centerOfPixel = gridUV + vec2(1.0/30.0, 1.0/30.0);
+          vec2 interactionGrid = vec2(30.0, 30.0);
+          vec2 gridUV = floor(vUv * interactionGrid) / interactionGrid;
+          vec2 centerOfPixel = gridUV + (0.5 / interactionGrid);
 
           vec2 mouseDirection = u_mouse - u_prevMouse;
 
@@ -116,13 +126,27 @@ export default function Hero() {
           float strength = smoothstep(0.2, 0.0, pixelDistanceToMouse);
 
           vec2 uvOffset = strength * -mouseDirection * 0.3;
-          vec2 uv = vUv - uvOffset;
+          vec2 revealGrid = vec2(56.0, 22.0);
+          vec2 revealCell = floor(vUv * revealGrid);
+          vec2 pixelUV = (revealCell + 0.5) / revealGrid;
+          float cellNoise = random(revealCell);
+          float sweep = (vUv.x + (1.0 - vUv.y)) * 0.15;
+          float cellReveal = smoothstep(
+            -0.04,
+            0.08,
+            u_reveal * 1.45 - cellNoise * 0.72 - sweep
+          );
+          float resolvePixels = smoothstep(0.55, 1.0, u_reveal);
+          vec2 sampledUV = mix(pixelUV, vUv, resolvePixels);
+          vec2 uv = sampledUV - uvOffset;
 
           vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.008, 0.0));
           vec4 colorG = texture2D(u_texture, uv);
           vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.008, 0.0));
+          vec3 color = vec3(colorR.r, colorG.g, colorB.b);
+          vec3 background = vec3(250.0 / 255.0);
 
-          gl_FragColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
+          gl_FragColor = vec4(mix(background, color, cellReveal), 1.0);
         }
       `;
 
@@ -138,6 +162,7 @@ export default function Hero() {
         u_mouse: { value: new THREE.Vector2() },
         u_prevMouse: { value: new THREE.Vector2() },
         u_aberrationIntensity: { value: 0.0 },
+        u_reveal: { value: 0.0 },
         u_texture: { value: texture },
       };
 
@@ -156,6 +181,25 @@ export default function Hero() {
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio || 1);
       renderer.setSize(w, h, false); // false = don't override CSS width/height
+
+      // ─── GSAP entrance ───────────────────────────────────────────────────────
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      const gsapContext = gsap.context(() => {
+        if (prefersReducedMotion) {
+          shaderUniforms.u_reveal.value = 1;
+          return;
+        }
+
+        gsap.to(shaderUniforms.u_reveal, {
+          value: 1,
+          duration: 1.65,
+          delay: 0.15,
+          ease: interactionEase,
+        });
+      }, canvas);
 
       // ─── State ───────────────────────────────────────────────────────────────
       let easeFactor = 0.02;
@@ -240,6 +284,7 @@ export default function Hero() {
         canvas.removeEventListener("mousemove", onMouseMove);
         canvas.removeEventListener("mouseenter", onMouseEnter);
         canvas.removeEventListener("mouseleave", onMouseLeave);
+        gsapContext.revert();
         renderer.dispose();
         shaderUniforms.u_texture.value.dispose();
       };
@@ -247,21 +292,11 @@ export default function Hero() {
 
     init();
 
-    return () => cleanup?.();
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100dvh",
-        display: "block",
-        background: "#fafafa",
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} className={styles.canvas} />;
 }
