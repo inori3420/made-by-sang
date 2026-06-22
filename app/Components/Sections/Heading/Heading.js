@@ -15,12 +15,37 @@ export default function Heading() {
     let cleanup;
     let cancelled = false;
 
+    async function loadSaansBold() {
+      const fontDescriptor = '700 16px "Saans"';
+      const sampleText = "MADEBY©SANG";
+
+      await document.fonts.load(fontDescriptor, sampleText);
+      await document.fonts.ready;
+
+      if (document.fonts.check(fontDescriptor, sampleText)) return true;
+
+      const font = new FontFace(
+        "Saans",
+        'url("/fonts/Saans-TRIAL-Bold.woff2") format("woff2")',
+        {
+          style: "normal",
+          weight: "700",
+        },
+      );
+
+      const loadedFont = await font.load();
+      if (cancelled) return false;
+
+      document.fonts.add(loadedFont);
+      await document.fonts.load(fontDescriptor, sampleText);
+
+      return document.fonts.check(fontDescriptor, sampleText);
+    }
+
     async function init() {
       // ─── Load font ───────────────────────────────────────────────────────────
-      const font = new FontFace("Saans", "url(/fonts/Saans-TRIAL-Bold.woff2)");
-      await font.load();
-      if (cancelled) return;
-      document.fonts.add(font);
+      const isFontReady = await loadSaansBold();
+      if (cancelled || !isFontReady) return;
 
       // ─── Helpers ─────────────────────────────────────────────────────────────
       function getSize() {
@@ -52,7 +77,7 @@ export default function Heading() {
 
         for (let i = 0; i < 24; i++) {
           const nextSize = Math.floor((minSize + maxSize) / 2);
-          ctx.font = `900 ${nextSize}px Saans`;
+          ctx.font = `700 ${nextSize}px Saans`;
           const metrics = ctx.measureText(text);
           const textH =
             metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
@@ -65,10 +90,10 @@ export default function Heading() {
           }
         }
 
-        ctx.font = `900 ${fontSize}px Saans`;
+        ctx.font = `700 ${fontSize}px Saans`;
         while (ctx.measureText(text).width > maxW && fontSize > 10) {
           fontSize -= 1;
-          ctx.font = `900 ${fontSize}px Saans`;
+          ctx.font = `700 ${fontSize}px Saans`;
         }
 
         ctx.fillStyle = "#111111";
@@ -290,7 +315,11 @@ export default function Heading() {
       };
     }
 
-    init();
+    init().catch((error) => {
+      if (!cancelled) {
+        console.error("Unable to initialize Heading:", error);
+      }
+    });
 
     return () => {
       cancelled = true;

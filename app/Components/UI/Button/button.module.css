@@ -1,12 +1,13 @@
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   gap: var(--space-xs);
   min-height: 2.25rem;
-  padding: 0.625rem 0.875rem;
+  padding: var(--space-sm) var(--space-md);
   border: 0;
-  border-radius: var(--radius-full);
   background: var(--button-primary-bg);
   color: var(--button-primary-text);
   font-family: var(--font-family-body);
@@ -17,34 +18,38 @@
   cursor: pointer;
   transition:
     background-color 180ms var(--ease-interaction),
+    color 180ms var(--ease-interaction),
     transform 180ms var(--ease-interaction);
 }
 
-.button:hover {
-  background: var(--brand-300);
-  transform: translateY(-2px);
+.button:hover,
+.button:focus-visible {
+  color: var(--text-inverse-primary);
 }
 
-.button:active {
-  transform: translateY(0);
+.label {
+  position: relative;
+  z-index: 2;
+}
+
+.pixelGrid {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+}
+
+.pixel {
+  background: var(--bg-inverse);
+  transform: scale(0);
+  transform-origin: center;
+  will-change: transform;
 }
 
 .button:focus-visible {
   outline: 2px solid var(--text-primary);
   outline-offset: 0.25rem;
-}
-
-.arrow {
-  transition: transform 180ms var(--ease-interaction);
-}
-
-.button:hover .arrow {
-  transform: translate(2px, -2px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button,
-  .arrow {
-    transition: none;
-  }
 }
