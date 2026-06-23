@@ -4,12 +4,17 @@ import { useEffect, useState } from "react";
 import styles from "./time.module.css";
 
 function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("en-AU", {
+  const parts = new Intl.DateTimeFormat("en-AU", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false,
+    hourCycle: "h23",
     timeZone,
-  }).format(new Date());
+  }).formatToParts(new Date());
+
+  return {
+    hour: parts.find(({ type }) => type === "hour")?.value ?? "00",
+    minute: parts.find(({ type }) => type === "minute")?.value ?? "00",
+  };
 }
 
 export default function Time({
@@ -30,7 +35,12 @@ export default function Time({
 
   return (
     <time className={classes} suppressHydrationWarning>
-      {location} {time}
+      <span>{location}</span>{" "}
+      <span>{time.hour}</span>
+      <span className={styles.separator} aria-hidden="true">
+        :
+      </span>
+      <span>{time.minute}</span>
     </time>
   );
 }

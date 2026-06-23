@@ -5,3 +5,19 @@
   line-height: var(--leading-body);
   font-weight: var(--font-weight-medium);
 }
+
+.separator {
+  animation: time-blink 1s steps(1, end) infinite;
+}
+
+@keyframes time-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .separator {
+    animation: none;
+  }
+}

@@ -1,6 +1,8 @@
 import "./globals.css";
 import "./styles.css";
+import "locomotive-scroll/locomotive-scroll.css";
 import Navbar from "./Components/UI/Navbar/Navbar";
+import SmoothScroll from "./Components/UI/SmoothScroll/SmoothScroll";
 
 export const metadata = {
   title: "Create Next App",
@@ -11,6 +13,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <SmoothScroll />
         <Navbar />
         <main data-main className="min-h-full flex flex-col">
           {children}

@@ -110,6 +110,7 @@ export default function Navbar() {
             });
             gsap.set(menu, { visibility: "hidden" });
             document.body.style.overflow = "";
+            window.dispatchEvent(new Event("locomotive-scroll:start"));
           },
         });
 
@@ -200,6 +201,7 @@ export default function Navbar() {
           timelineRef.current = null;
           isOpenRef.current = false;
           document.body.style.overflow = "";
+          window.dispatchEvent(new Event("locomotive-scroll:start"));
           gsap.set([main, overlay], { clearProps: "transform" });
           gsap.set(menu, {
             visibility: "hidden",
@@ -236,6 +238,7 @@ export default function Navbar() {
         opacity: 1,
         visibility: "visible",
       });
+      window.dispatchEvent(new Event("locomotive-scroll:stop"));
       document.body.style.overflow = "hidden";
       timeline.invalidate().play();
     } else {
@@ -315,6 +318,7 @@ export default function Navbar() {
         id="mobile-navigation"
         className={styles.mobileMenu}
         aria-hidden={!isOpen}
+        data-lenis-prevent
       >
         <nav className={styles.mobileMenuInner} aria-label="Mobile navigation">
           <ul className={styles.mobileMenuList}>
