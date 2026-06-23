@@ -7,7 +7,11 @@ import { RiArrowRightUpLine } from "@remixicon/react";
 import Button from "../Button/Button";
 import Globe from "../Globe/Globe";
 import Navlink from "../Navlink/Navlink";
-import { gsap, interactionEase } from "../../../lib/animation";
+import {
+  gsap,
+  interactionEase,
+  ScrollTrigger,
+} from "../../../lib/animation";
 import styles from "./navbar.module.css";
 
 const navigation = [
@@ -27,6 +31,7 @@ export default function Navbar() {
   const timelineRef = useRef(null);
   const isOpenRef = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isInverse, setIsInverse] = useState(false);
 
   useLayoutEffect(() => {
     const navbar = navbarRef.current;
@@ -53,6 +58,65 @@ export default function Navbar() {
 
     return () => entranceContext.revert();
   }, []);
+
+  useLayoutEffect(() => {
+    const navbar = navbarRef.current;
+    const colorProbe = document.createElement("span");
+    colorProbe.style.backgroundColor = "var(--bg-inverse)";
+    document.body.appendChild(colorProbe);
+
+    const inverseBackground = getComputedStyle(colorProbe).backgroundColor;
+    colorProbe.remove();
+
+    const sections = gsap.utils.toArray("[data-main] section");
+    const inverseSections = sections.filter((section) => {
+      const explicitTheme = section.dataset.navbarTheme;
+
+      if (explicitTheme) {
+        return explicitTheme === "inverse";
+      }
+
+      return getComputedStyle(section).backgroundColor === inverseBackground;
+    });
+
+    if (!inverseSections.length) {
+      const resetFrame = window.requestAnimationFrame(() => {
+        setIsInverse(false);
+      });
+
+      return () => window.cancelAnimationFrame(resetFrame);
+    }
+
+    const activeSections = new Set();
+    const triggers = inverseSections.map((section) =>
+      ScrollTrigger.create({
+        trigger: section,
+        start: () => `top ${navbar.offsetHeight / 2}px`,
+        end: () => `bottom ${navbar.offsetHeight / 2}px`,
+        invalidateOnRefresh: true,
+        onToggle: (self) => {
+          if (self.isActive) {
+            activeSections.add(section);
+          } else {
+            activeSections.delete(section);
+          }
+
+          setIsInverse(activeSections.size > 0);
+        },
+      }),
+    );
+
+    ScrollTrigger.refresh();
+    const syncFrame = window.requestAnimationFrame(() => {
+      setIsInverse(activeSections.size > 0);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(syncFrame);
+      triggers.forEach((trigger) => trigger.kill());
+      activeSections.clear();
+    };
+  }, [pathname]);
 
   useLayoutEffect(() => {
     const navbar = navbarRef.current;
@@ -270,7 +334,9 @@ export default function Navbar() {
     <>
       <header
         ref={navbarRef}
-        className={`${styles.navbar} ${isOpen ? styles.menuOpen : ""}`}
+        className={`${styles.navbar} ${
+          isInverse ? styles.inverseTheme : ""
+        } ${isOpen ? styles.menuOpen : ""}`}
         style={{
           opacity: 0,
           visibility: "hidden",
@@ -295,6 +361,7 @@ export default function Navbar() {
         <div ref={toggleRef} className={styles.mobileAction}>
           <Button
             type="button"
+            icon={false}
             className={styles.menuToggle}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"

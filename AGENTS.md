@@ -156,6 +156,11 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 ### Navbar
 
 - Fixed three-column desktop layout: Globe, navigation links, contact Button.
+- Navbar theming is scroll-aware rather than blend-mode based.
+- Navbar automatically inspects every `[data-main] section` and treats sections whose computed background matches `--bg-inverse` as inverse sections.
+- `data-navbar-theme="inverse"` or `data-navbar-theme="default"` may be used to override automatic background detection.
+- ScrollTrigger switches the Globe and desktop Navlinks to inverse tokens while the navbar overlaps an inverse section.
+- Page-level section components must render a semantic `<section>` if they should participate in automatic navbar theme detection.
 - Mobile layout uses an 80vw black underlay menu.
 - Opening the menu slides the panel in while shifting `[data-main]` left.
 - The menu closes on route changes, overlay clicks, and Escape.
@@ -165,22 +170,24 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 
 ### Button
 
-- Uses a 3-by-8 pixel grid hover reveal.
-- The reveal moves from left to right.
-- Rapid hover in/out must kill prior tweens cleanly.
-- Hover uses inverse background and inverse-primary text.
+- Default buttons show a trailing arrow icon.
+- Hover/focus collapses the trailing icon and expands the leading icon, shifting the label to the right.
+- Rapid hover in/out must kill prior timelines cleanly.
+- Pass `icon={false}` for controls with custom icon content, such as the mobile Menu button.
 
 ### Navlink
 
 - Active state is determined by exact pathname equality.
 - Hover shape enters left-to-right and exits through the right edge.
-- Active and hover text use primary color; inactive text uses the muted token.
+- Navlinks consume `--navbar-foreground` and `--navbar-muted` from Navbar so their colors follow the current section theme.
+- Hover and focus text always use `--text-primary`, including over inverse sections, to contrast with the brand hover shape.
 
 ### Globe
 
 - CSS wireframe structure with six animated longitude circles.
 - Continuously animates and accelerates based on scroll velocity.
 - Scroll listeners and reset tweens must be cleaned up.
+- Inherits the Navbar logo color so it follows the current section theme.
 
 ### Heading
 

@@ -8,7 +8,7 @@ const paragraphs = [
 
 export default function About() {
   return (
-    <section className={styles.about}>
+    <section className={styles.about} data-navbar-theme="inverse">
       <div className={styles.content}>
         <ScrollText paragraphs={paragraphs} />
       </div>

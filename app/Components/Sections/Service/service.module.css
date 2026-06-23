@@ -1,0 +1,7 @@
+.services {
+  position: relative;
+  background-color: var(--bg-inverse);
+  padding: var(--section-padding-y) var(--page-padding-x);
+  z-index: 1;
+  min-height: 100dvh;
+}

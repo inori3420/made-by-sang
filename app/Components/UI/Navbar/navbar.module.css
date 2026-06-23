@@ -1,4 +1,7 @@
 .navbar {
+  --navbar-foreground: var(--text-primary);
+  --navbar-muted: var(--text-muted);
+
   position: fixed;
   z-index: 10;
   top: 0;
@@ -11,6 +14,11 @@
   pointer-events: none;
 }
 
+.inverseTheme {
+  --navbar-foreground: var(--text-inverse-primary);
+  --navbar-muted: var(--text-inverse-secondary);
+}
+
 .navbar > * {
   pointer-events: auto;
 }
@@ -20,8 +28,9 @@
   display: inline-flex;
   justify-self: start;
   align-items: center;
-  color: var(--text-primary);
+  color: var(--navbar-foreground);
   text-decoration: none;
+  transition: color 240ms var(--ease-interaction);
 }
 
 .navigation {
