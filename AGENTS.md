@@ -196,12 +196,28 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Status uses `--text-body-sm` and an `--space-xs` blinking brand cube.
 - Time defaults to Melbourne (`Australia/Melbourne`), uses a 24-hour `h23` clock, and has a blinking colon.
 
+### About
+
+- The profile information uses `--text-body` for the name and `--text-body-sm` for the role.
+- Use `--section-padding-y` for section-level vertical padding; `--page-padding-x` is the horizontal page gutter.
+- About passes both copy blocks into the reusable `UI/ScrollText` component.
+
+### ScrollText
+
+- `ScrollText` renders one semantic `<h2>` with visually separated paragraph blocks.
+- It splits the visible copy into accessible character spans while retaining unsplit copy for screen readers.
+- Each character has a persistent muted base and an inverse-primary foreground mask.
+- ScrollTrigger reveals each full-size foreground glyph with a left-to-right `clip-path` mask in reading order; do not use `scaleX`, which distorts the letterforms.
+- This text-fill effect remains scroll-driven when `prefers-reduced-motion` is enabled because it does not move layout or content position.
+- The component accepts `paragraphs`, `className`, `start`, and `end` props.
+
 ### SmoothScroll
 
 - `UI/SmoothScroll` initializes Locomotive Scroll v5 once from the root layout.
 - The implementation uses Locomotive Scroll's Lenis-based v5 API, not legacy v4 container syntax.
 - It is disabled when `prefers-reduced-motion` is active.
 - Route changes trigger a Locomotive resize without replacing Next.js navigation behavior.
+- Locomotive's scroll callback calls `ScrollTrigger.update()`, and route resizes refresh ScrollTrigger measurements.
 - The mobile navbar pauses and resumes smooth scrolling with `locomotive-scroll:stop` and `locomotive-scroll:start` window events.
 - Fixed or nested independently scrollable overlays should use `data-lenis-prevent`.
 - Always destroy the Locomotive instance and remove event listeners during cleanup.

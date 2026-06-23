@@ -1,0 +1,51 @@
+.heading {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-family-display);
+  font-size: var(--text-h5);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-heading);
+}
+
+.paragraph {
+  display: block;
+}
+
+.paragraph + .paragraph {
+  margin-top: var(--space-lg);
+}
+
+.word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.character {
+  position: relative;
+  display: inline-block;
+}
+
+.characterBase {
+  color: var(--text-muted);
+  opacity: 0.3;
+}
+
+.characterFill {
+  position: absolute;
+  inset: 0;
+  color: var(--text-inverse-primary);
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+.screenReaderText {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

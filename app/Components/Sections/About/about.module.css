@@ -1,0 +1,47 @@
+.about {
+  position: relative;
+  padding: var(--section-padding-y) var(--page-padding-x);
+  width: 100%;
+  height: auto;
+  background-color: var(--bg-inverse);
+}
+
+.content {
+  position: relative;
+  width: var(--content-width);
+  max-width: var(--max-width-xl);
+  margin: 0 auto;
+}
+
+.infor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem auto;
+  width: var(--content-width);
+  max-width: var(--max-width-xl);
+}
+
+.infor > div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  color: var(--text-inverse-primary);
+}
+
+.name {
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+}
+
+.role {
+  font-size: var(--text-body-sm);
+  color: var(--text-inverse-secondary);
+  opacity: 0.8;
+}
+
+.name,
+.role {
+  line-height: var(--leading-body);
+}

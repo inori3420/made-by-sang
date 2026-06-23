@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Hero from "./Components/Sections/Hero/Hero";
+import About from "./Components/Sections/About/About";
 
 export const metadata = {
   title: "Made by Sang",
@@ -11,7 +12,8 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <section className="h-screen"></section>
+      <About />
+      <section className="bg-black text-white py-20 px-4 h-screen"></section>
     </>
   );
 }

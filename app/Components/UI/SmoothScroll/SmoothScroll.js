@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import { ScrollTrigger } from "../../../lib/animation";
 
 const STOP_EVENT = "locomotive-scroll:stop";
 const START_EVENT = "locomotive-scroll:start";
@@ -40,6 +41,7 @@ export default function SmoothScroll() {
 
       const scroll = new LocomotiveScroll({
         autoStart: false,
+        scrollCallback: ScrollTrigger.update,
         lenisOptions: {
           autoResize: true,
           lerp: 0.1,
@@ -69,6 +71,7 @@ export default function SmoothScroll() {
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       scrollRef.current?.resize();
+      ScrollTrigger.refresh();
     });
 
     return () => window.cancelAnimationFrame(frame);
