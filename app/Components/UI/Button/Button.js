@@ -20,6 +20,8 @@ export default function Button({
   ...props
 }) {
   const buttonRef = useRef(null);
+  const contentRef = useRef(null);
+  const labelRef = useRef(null);
   const leadingSlotRef = useRef(null);
   const trailingSlotRef = useRef(null);
   const reduceMotionRef = useRef(false);
@@ -28,6 +30,7 @@ export default function Button({
 
   useLayoutEffect(() => {
     const button = buttonRef.current;
+    const label = labelRef.current;
     const leadingSlot = leadingSlotRef.current;
     const trailingSlot = trailingSlotRef.current;
 
@@ -38,30 +41,32 @@ export default function Button({
 
       if (icon) {
         gsap.set(leadingSlot, {
-          width: 0,
-          marginRight: "calc(var(--space-md) * -1)",
           scale: 0,
           transformOrigin: "center",
         });
         gsap.set(trailingSlot, {
-          width: "2.5rem",
-          marginLeft: 0,
           scale: 1,
           transformOrigin: "center",
         });
+        gsap.set(label, { x: 0 });
       }
     }, button);
 
     return () => {
       interactionRef.current?.kill();
-      gsap.killTweensOf([leadingSlot, trailingSlot]);
+      gsap.killTweensOf([label, leadingSlot, trailingSlot]);
       context.revert();
     };
   }, [icon]);
 
   function showInteraction() {
+    const content = contentRef.current;
+    const iconWidth = leadingSlotRef.current.offsetWidth;
+    const gap = Number.parseFloat(getComputedStyle(content).columnGap) || 0;
+
     interactionRef.current?.kill();
     gsap.killTweensOf([
+      labelRef.current,
       leadingSlotRef.current,
       trailingSlotRef.current,
     ]);
@@ -79,22 +84,11 @@ export default function Button({
 
     if (icon) {
       timeline
+        .to(leadingSlotRef.current, { scale: 1 }, 0)
+        .to(trailingSlotRef.current, { scale: 0 }, 0)
         .to(
-          leadingSlotRef.current,
-          {
-            width: "2.5rem",
-            marginRight: 0,
-            scale: 1,
-          },
-          0,
-        )
-        .to(
-          trailingSlotRef.current,
-          {
-            width: 0,
-            marginLeft: "calc(var(--space-md) * -1)",
-            scale: 0,
-          },
+          labelRef.current,
+          { x: iconWidth + gap },
           0,
         );
     }
@@ -105,6 +99,7 @@ export default function Button({
   function hideInteraction() {
     interactionRef.current?.kill();
     gsap.killTweensOf([
+      labelRef.current,
       leadingSlotRef.current,
       trailingSlotRef.current,
     ]);
@@ -122,31 +117,16 @@ export default function Button({
 
     if (icon) {
       timeline
-        .to(
-          leadingSlotRef.current,
-          {
-            width: 0,
-            marginRight: "calc(var(--space-md) * -1)",
-            scale: 0,
-          },
-          0,
-        )
-        .to(
-          trailingSlotRef.current,
-          {
-            width: "2.5rem",
-            marginLeft: 0,
-            scale: 1,
-          },
-          0,
-        );
+        .to(leadingSlotRef.current, { scale: 0 }, 0)
+        .to(trailingSlotRef.current, { scale: 1 }, 0)
+        .to(labelRef.current, { x: 0 }, 0);
     }
 
     interactionRef.current = timeline;
   }
 
   const content = (
-    <span className={styles.content}>
+    <span ref={contentRef} className={styles.content}>
       {icon && (
         <span
           ref={leadingSlotRef}
@@ -156,7 +136,9 @@ export default function Button({
           <Icon size={18} />
         </span>
       )}
-      <span className={`${styles.tile} ${styles.label}`}>{children}</span>
+      <span ref={labelRef} className={`${styles.tile} ${styles.label}`}>
+        {children}
+      </span>
       {icon && (
         <span
           ref={trailingSlotRef}

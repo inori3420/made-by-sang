@@ -27,10 +27,10 @@
 
 .content {
   position: relative;
-  display: flex;
-  flex-direction: row;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-md);
+  column-gap: var(--space-md);
+  padding-right: calc(2.5rem + var(--space-md));
 }
 
 .tile {
@@ -42,20 +42,24 @@
 }
 
 .label {
+  position: relative;
+  z-index: 1;
   flex: none;
   padding: var(--space-sm) var(--space-md);
+  will-change: transform;
 }
 
 .iconSlot {
-  display: inline-flex;
-  flex: none;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  overflow: hidden;
   background: var(--button-primary-bg);
-  will-change: width, margin, transform;
+  will-change: transform;
 }
 
 .iconSlot svg {
@@ -63,13 +67,12 @@
 }
 
 .leadingIconSlot {
-  width: 0;
-  margin-right: calc(var(--space-md) * -1);
+  left: 0;
   transform: scale(0);
 }
 
 .trailingIconSlot {
-  width: 2.5rem;
+  right: 0;
 }
 
 .button:focus-visible {

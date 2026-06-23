@@ -173,6 +173,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Default buttons show a trailing arrow icon.
 - Hover/focus collapses the trailing icon and expands the leading icon, shifting the label to the right.
 - Rapid hover in/out must kill prior timelines cleanly.
+- Keep the Button's outer footprint fixed; animate icon scale and label translation only. Do not animate icon width or margins, which causes hover hitbox feedback and layout jumping.
 - Pass `icon={false}` for controls with custom icon content, such as the mobile Menu button.
 
 ### Navlink
