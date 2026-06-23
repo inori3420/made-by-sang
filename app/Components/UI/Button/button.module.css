@@ -29,8 +29,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  column-gap: var(--space-md);
-  padding-right: calc(2.5rem + var(--space-md));
+  column-gap: var(--space-2xs);
+  padding-right: calc(2.5rem + var(--space-2xs));
 }
 
 .tile {
@@ -45,8 +45,29 @@
   position: relative;
   z-index: 1;
   flex: none;
+  height: 2.5rem;
   padding: var(--space-sm) var(--space-md);
   will-change: transform;
+}
+
+.labelViewport {
+  display: block;
+  height: 1em;
+  overflow: hidden;
+}
+
+.labelStack {
+  display: flex;
+  flex-direction: column;
+  height: 2em;
+  will-change: transform;
+}
+
+.labelStack > span {
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 1em;
 }
 
 .iconSlot {

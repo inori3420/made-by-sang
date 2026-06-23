@@ -3,15 +3,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiArrowRightUpLine } from "@remixicon/react";
+import {
+  RiArrowRightUpLine,
+  RiCloseLargeFill,
+  RiMenu3Fill,
+} from "@remixicon/react";
 import Button from "../Button/Button";
 import Globe from "../Globe/Globe";
 import Navlink from "../Navlink/Navlink";
-import {
-  gsap,
-  interactionEase,
-  ScrollTrigger,
-} from "../../../lib/animation";
+import { gsap, interactionEase, ScrollTrigger } from "../../../lib/animation";
 import styles from "./navbar.module.css";
 
 const navigation = [
@@ -128,8 +128,6 @@ export default function Navbar() {
 
     if (!menu || !overlay || !dark || !toggle || !main) return;
 
-    const labels = toggle.querySelectorAll("[data-menu-label]");
-    const bars = toggle.querySelectorAll("[data-menu-bar]");
     const menuItems = menu.querySelectorAll("[data-menu-item]");
     const media = gsap.matchMedia();
 
@@ -156,8 +154,6 @@ export default function Navbar() {
         });
         gsap.set(dark, { autoAlpha: 0 });
         gsap.set(main, { x: 0 });
-        gsap.set(labels, { yPercent: 0 });
-        gsap.set(bars, { y: 0, rotation: 0 });
         gsap.set(menuItems, {
           clearProps: "opacity,visibility,transform",
         });
@@ -204,32 +200,6 @@ export default function Navbar() {
               duration: reduceMotion ? 0 : 0.45,
             },
             0,
-          )
-          .to(
-            labels,
-            {
-              yPercent: -100,
-              duration: reduceMotion ? 0 : 0.38,
-            },
-            0,
-          )
-          .to(
-            bars[0],
-            {
-              y: "0.22rem",
-              rotation: 45,
-              duration: reduceMotion ? 0 : 0.35,
-            },
-            0.04,
-          )
-          .to(
-            bars[1],
-            {
-              y: "-0.22rem",
-              rotation: -45,
-              duration: reduceMotion ? 0 : 0.35,
-            },
-            0.04,
           )
           .fromTo(
             menuItems,
@@ -355,27 +325,25 @@ export default function Navbar() {
         </nav>
 
         <div className={styles.desktopAction}>
-          <Button href="/contact">Let&apos;s talk</Button>
+          <Button href="mailto:trannhatsang2000@gmail.com">
+            Let&apos;s talk
+          </Button>
         </div>
 
         <div ref={toggleRef} className={styles.mobileAction}>
           <Button
             type="button"
-            icon={false}
+            active={isOpen}
+            activeLabel="Close"
+            LeadingIcon={RiCloseLargeFill}
+            TrailingIcon={RiMenu3Fill}
             className={styles.menuToggle}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             onClick={toggleMenu}
           >
-            <span className={styles.toggleText}>
-              <span data-menu-label>Menu</span>
-              <span data-menu-label>Close</span>
-            </span>
-            <span className={styles.toggleIcon} aria-hidden="true">
-              <span data-menu-bar />
-              <span data-menu-bar />
-            </span>
+            Menu
           </Button>
         </div>
       </header>

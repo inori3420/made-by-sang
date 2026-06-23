@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { RiCornerDownRightLine } from "@remixicon/react";
 import { gsap, interactionEase } from "../../../lib/animation";
@@ -12,6 +12,10 @@ export default function Button({
   href,
   icon = true,
   Icon = RiCornerDownRightLine,
+  LeadingIcon = Icon,
+  TrailingIcon = Icon,
+  active,
+  activeLabel,
   onBlur,
   onFocus,
   onMouseEnter,
@@ -22,17 +26,23 @@ export default function Button({
   const buttonRef = useRef(null);
   const contentRef = useRef(null);
   const labelRef = useRef(null);
+  const labelStackRef = useRef(null);
   const leadingSlotRef = useRef(null);
   const trailingSlotRef = useRef(null);
   const reduceMotionRef = useRef(false);
   const interactionRef = useRef(null);
+  const initializedRef = useRef(false);
+  const initialActiveRef = useRef(Boolean(active));
+  const isControlled = active !== undefined;
   const classes = [styles.button, className].filter(Boolean).join(" ");
 
   useLayoutEffect(() => {
     const button = buttonRef.current;
     const label = labelRef.current;
+    const labelStack = labelStackRef.current;
     const leadingSlot = leadingSlotRef.current;
     const trailingSlot = trailingSlotRef.current;
+    const initialActive = initialActiveRef.current;
 
     const context = gsap.context(() => {
       reduceMotionRef.current = window.matchMedia(
@@ -41,25 +51,37 @@ export default function Button({
 
       if (icon) {
         gsap.set(leadingSlot, {
-          scale: 0,
+          scale: initialActive ? 1 : 0,
+          rotation: initialActive ? 0 : -90,
           transformOrigin: "center",
         });
         gsap.set(trailingSlot, {
-          scale: 1,
+          scale: initialActive ? 0 : 1,
+          rotation: initialActive ? 90 : 0,
           transformOrigin: "center",
         });
-        gsap.set(label, { x: 0 });
+        gsap.set(label, {
+          x: initialActive
+            ? leadingSlot.offsetWidth +
+              (Number.parseFloat(
+                getComputedStyle(contentRef.current).columnGap,
+              ) || 0)
+            : 0,
+        });
+        gsap.set(labelStack, { yPercent: initialActive ? -50 : 0 });
       }
+
+      initializedRef.current = true;
     }, button);
 
     return () => {
       interactionRef.current?.kill();
-      gsap.killTweensOf([label, leadingSlot, trailingSlot]);
+      gsap.killTweensOf([label, labelStack, leadingSlot, trailingSlot]);
       context.revert();
     };
   }, [icon]);
 
-  function showInteraction() {
+  const showInteraction = useCallback(() => {
     const content = contentRef.current;
     const iconWidth = leadingSlotRef.current.offsetWidth;
     const gap = Number.parseFloat(getComputedStyle(content).columnGap) || 0;
@@ -67,6 +89,7 @@ export default function Button({
     interactionRef.current?.kill();
     gsap.killTweensOf([
       labelRef.current,
+      labelStackRef.current,
       leadingSlotRef.current,
       trailingSlotRef.current,
     ]);
@@ -84,22 +107,20 @@ export default function Button({
 
     if (icon) {
       timeline
-        .to(leadingSlotRef.current, { scale: 1 }, 0)
-        .to(trailingSlotRef.current, { scale: 0 }, 0)
-        .to(
-          labelRef.current,
-          { x: iconWidth + gap },
-          0,
-        );
+        .to(leadingSlotRef.current, { scale: 1, rotation: 0 }, 0)
+        .to(trailingSlotRef.current, { scale: 0, rotation: 90 }, 0)
+        .to(labelStackRef.current, { yPercent: -50 }, 0)
+        .to(labelRef.current, { x: iconWidth + gap }, 0);
     }
 
     interactionRef.current = timeline;
-  }
+  }, [icon]);
 
-  function hideInteraction() {
+  const hideInteraction = useCallback(() => {
     interactionRef.current?.kill();
     gsap.killTweensOf([
       labelRef.current,
+      labelStackRef.current,
       leadingSlotRef.current,
       trailingSlotRef.current,
     ]);
@@ -117,13 +138,24 @@ export default function Button({
 
     if (icon) {
       timeline
-        .to(leadingSlotRef.current, { scale: 0 }, 0)
-        .to(trailingSlotRef.current, { scale: 1 }, 0)
+        .to(leadingSlotRef.current, { scale: 0, rotation: -90 }, 0)
+        .to(trailingSlotRef.current, { scale: 1, rotation: 0 }, 0)
+        .to(labelStackRef.current, { yPercent: 0 }, 0)
         .to(labelRef.current, { x: 0 }, 0);
     }
 
     interactionRef.current = timeline;
-  }
+  }, [icon]);
+
+  useEffect(() => {
+    if (!isControlled || !initializedRef.current) return;
+
+    if (active) {
+      showInteraction();
+    } else {
+      hideInteraction();
+    }
+  }, [active, hideInteraction, isControlled, showInteraction]);
 
   const content = (
     <span ref={contentRef} className={styles.content}>
@@ -133,11 +165,20 @@ export default function Button({
           className={`${styles.iconSlot} ${styles.leadingIconSlot}`}
           aria-hidden="true"
         >
-          <Icon size={18} />
+          <LeadingIcon size={18} />
         </span>
       )}
       <span ref={labelRef} className={`${styles.tile} ${styles.label}`}>
-        {children}
+        {icon ? (
+          <span className={styles.labelViewport}>
+            <span ref={labelStackRef} className={styles.labelStack}>
+              <span>{children}</span>
+              <span aria-hidden="true">{activeLabel ?? children}</span>
+            </span>
+          </span>
+        ) : (
+          children
+        )}
       </span>
       {icon && (
         <span
@@ -145,7 +186,7 @@ export default function Button({
           className={`${styles.iconSlot} ${styles.trailingIconSlot}`}
           aria-hidden="true"
         >
-          <Icon size={18} />
+          <TrailingIcon size={18} />
         </span>
       )}
     </span>
@@ -158,19 +199,19 @@ export default function Button({
         href={href}
         className={classes}
         onMouseEnter={(event) => {
-          showInteraction();
+          if (!isControlled) showInteraction();
           onMouseEnter?.(event);
         }}
         onMouseLeave={(event) => {
-          hideInteraction();
+          if (!isControlled) hideInteraction();
           onMouseLeave?.(event);
         }}
         onFocus={(event) => {
-          showInteraction();
+          if (!isControlled) showInteraction();
           onFocus?.(event);
         }}
         onBlur={(event) => {
-          hideInteraction();
+          if (!isControlled) hideInteraction();
           onBlur?.(event);
         }}
         {...props}
@@ -186,19 +227,19 @@ export default function Button({
       type={type}
       className={classes}
       onMouseEnter={(event) => {
-        showInteraction();
+        if (!isControlled) showInteraction();
         onMouseEnter?.(event);
       }}
       onMouseLeave={(event) => {
-        hideInteraction();
+        if (!isControlled) hideInteraction();
         onMouseLeave?.(event);
       }}
       onFocus={(event) => {
-        showInteraction();
+        if (!isControlled) showInteraction();
         onFocus?.(event);
       }}
       onBlur={(event) => {
-        hideInteraction();
+        if (!isControlled) hideInteraction();
         onBlur?.(event);
       }}
       {...props}

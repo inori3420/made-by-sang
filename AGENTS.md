@@ -174,7 +174,8 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Hover/focus collapses the trailing icon and expands the leading icon, shifting the label to the right.
 - Rapid hover in/out must kill prior timelines cleanly.
 - Keep the Button's outer footprint fixed; animate icon scale and label translation only. Do not animate icon width or margins, which causes hover hitbox feedback and layout jumping.
-- Pass `icon={false}` for controls with custom icon content, such as the mobile Menu button.
+- Use `LeadingIcon` and `TrailingIcon` when the two Button states need different Remix icons.
+- Use the controlled `active` prop to hold the Button in its hover-style state, and `activeLabel` when the revealed duplicate label differs from the default label. The mobile Navbar toggle uses this for its Menu/Close transition.
 
 ### Navlink
 
