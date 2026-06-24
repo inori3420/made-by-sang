@@ -46,3 +46,10 @@
 .role {
   line-height: var(--leading-body);
 }
+
+@media (max-width: 47.9375rem) {
+  .content,
+  .infor {
+    max-width: none;
+  }
+}

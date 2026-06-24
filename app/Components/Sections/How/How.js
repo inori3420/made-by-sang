@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLayoutEffect, useRef } from "react";
 import {
   gsap,
@@ -9,22 +10,40 @@ import {
 } from "../../../lib/animation";
 import styles from "./how.module.css";
 
+const imageClipClosed = "polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)";
+const imageClipOpen = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";
+const placeholderImages = [
+  "/images/how/placeholder-1.png",
+  "/images/how/placeholder-2.png",
+  "/images/how/placeholder-3.png",
+  "/images/how/placeholder-4.png",
+  "/images/how/placeholder-5.png",
+];
+
 export default function How() {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const contentRef = useRef(null);
+  const imgGroupRef = useRef(null);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
     const heading = headingRef.current;
     const content = contentRef.current;
+    const imgGroup = imgGroupRef.current;
     let cancelled = false;
     let contentSplit;
     let headingSplits = [];
     let headingTrigger;
 
     const context = gsap.context(() => {
-      gsap.set([heading, content], { visibility: "hidden" });
+      gsap.set([heading, content, imgGroup], { visibility: "hidden" });
+      gsap.set(imgGroup, {
+        autoAlpha: 1,
+        clipPath: imageClipClosed,
+        rotation: -45,
+        transformOrigin: "50% 50%",
+      });
     }, section);
 
     async function setupAnimation() {
@@ -93,6 +112,12 @@ export default function How() {
             gsap.set(self.lines, {
               yPercent: reduceMotion ? 0 : 110,
             });
+            gsap.set(imgGroup, {
+              autoAlpha: 1,
+              clipPath: reduceMotion ? imageClipOpen : imageClipClosed,
+              rotation: reduceMotion ? 0 : -45,
+              visibility: "visible",
+            });
             gsap.set(content, { visibility: "visible" });
 
             const scrollAnimation = gsap.timeline({
@@ -123,6 +148,12 @@ export default function How() {
 
             enterPhrase(firstHeadingChars);
 
+            scrollAnimation.to(imgGroup, {
+              clipPath: imageClipOpen,
+              rotation: 0,
+              duration: reduceMotion ? 0 : 0.6,
+            });
+
             headingChars.slice(0, -1).forEach((currentChars, index) => {
               const nextChars = headingChars[index + 1] ?? [];
 
@@ -138,7 +169,7 @@ export default function How() {
 
             headingTrigger = ScrollTrigger.create({
               trigger: section,
-              start: "top -5%",
+              start: "top -3%",
               end: "bottom bottom",
               scrub: reduceMotion ? false : true,
               animation: scrollAnimation,
@@ -168,7 +199,20 @@ export default function How() {
       data-navbar-theme="inverse"
     >
       <div className={styles.stage}>
-        <div className={styles.imgGroup} aria-hidden="true" />
+        <div ref={imgGroupRef} className={styles.imgGroup} aria-hidden="true">
+          {placeholderImages.map((src) => (
+            <div key={src} className={styles.imgBox}>
+              <Image
+                src={src}
+                alt=""
+                fill
+                sizes="(max-width: 47.9375rem) 40vw, 24vw"
+                className={styles.img}
+                loading="eager"
+              />
+            </div>
+          ))}
+        </div>
 
         <div
           ref={headingRef}
@@ -178,10 +222,10 @@ export default function How() {
           aria-label="This is where I come in"
         >
           <span data-how-heading-phrase aria-hidden="true">
-            This is
+            This
           </span>
           <span data-how-heading-phrase aria-hidden="true">
-            where
+            is where
           </span>
           <span data-how-heading-phrase aria-hidden="true">
             I come in

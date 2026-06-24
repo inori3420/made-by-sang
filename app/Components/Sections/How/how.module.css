@@ -9,6 +9,7 @@
 
 .stage {
   position: sticky;
+  isolation: isolate;
   top: 0;
   display: flex;
   align-items: center;
@@ -21,12 +22,55 @@
 
 .imgGroup {
   position: absolute;
-  inset: 0 50% 0 0;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: min(24vw, 16rem);
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 50%;
   pointer-events: none;
+  will-change: clip-path, opacity;
+}
+
+.imgBox {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  animation: howImageSwap 5s steps(1, end) infinite;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.imgBox:nth-child(1) {
+  opacity: 1;
+  animation-delay: 0s;
+}
+
+.imgBox:nth-child(2) {
+  animation-delay: 1s;
+}
+
+.imgBox:nth-child(3) {
+  animation-delay: 2s;
+}
+
+.imgBox:nth-child(4) {
+  animation-delay: 3s;
+}
+
+.imgBox:nth-child(5) {
+  animation-delay: 4s;
 }
 
 .heading {
   position: relative;
+  z-index: 1;
   display: block;
   flex: none;
   width: 100%;
@@ -39,7 +83,7 @@
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-heading);
   text-transform: uppercase;
-  background-blend-mode: difference;
+  mix-blend-mode: difference;
   overflow: hidden;
 }
 
@@ -53,6 +97,7 @@
 
 .content {
   position: absolute;
+  z-index: 2;
   bottom: clamp(var(--space-3xl), 9svh, var(--space-6xl));
   left: 50%;
   width: calc(100% - (var(--page-padding-x) * 2));
@@ -78,4 +123,40 @@
 .char {
   display: inline-block;
   will-change: transform;
+}
+
+@keyframes howImageSwap {
+  0%,
+  20% {
+    opacity: 1;
+  }
+
+  20.001%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imgBox {
+    animation: none;
+  }
+
+  .imgBox:first-child {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .imgGroup {
+    width: min(50vw, 20rem);
+  }
+  .heading {
+    font-size: clamp(3.75rem, 17vw, 5.25rem);
+    letter-spacing: -0.07em;
+  }
+
+  .content {
+    max-width: none;
+  }
 }
