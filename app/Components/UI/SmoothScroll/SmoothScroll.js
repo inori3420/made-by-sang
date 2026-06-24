@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { ScrollTrigger } from "../../../lib/animation";
 
@@ -10,6 +10,24 @@ const START_EVENT = "locomotive-scroll:start";
 export default function SmoothScroll() {
   const pathname = usePathname();
   const scrollRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
+    return () => {
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = previousScrollRestoration;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(

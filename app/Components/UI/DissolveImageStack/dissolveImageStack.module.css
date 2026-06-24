@@ -1,0 +1,59 @@
+.dissolveImageStack {
+  position: relative;
+  width: 100%;
+  height: var(--dissolve-height, 100svh);
+  min-height: var(--dissolve-min-height, 100svh);
+  overflow: hidden;
+  background-color: var(--bg-inverse);
+  color: var(--text-inverse-primary);
+  isolation: isolate;
+}
+
+.imageStack,
+.imageLayer,
+.dissolveGrid {
+  position: absolute;
+  inset: 0;
+}
+
+.imageStack {
+  z-index: 0;
+}
+
+.imageLayer {
+  overflow: hidden;
+  will-change: clip-path;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.dissolveGrid {
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.dissolveCell {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--dissolve-cell-size);
+  height: var(--dissolve-cell-size);
+  color: var(--dissolve-text-color);
+  background-color: var(--dissolve-color);
+  font-family: var(--font-family-body);
+  font-size: var(--dissolve-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  visibility: hidden;
+  will-change: visibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dissolveCell {
+    display: none;
+  }
+}

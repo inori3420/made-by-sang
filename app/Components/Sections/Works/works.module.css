@@ -1,5 +1,321 @@
 .works {
   position: relative;
-  min-height: 100svh;
+  width: 100%;
+  min-height: var(--works-scroll-height);
   background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: stretch;
+  gap: clamp(var(--space-xl), 5svh, var(--space-4xl));
+  width: 100%;
+  height: 100svh;
+  padding: clamp(var(--space-4xl), 10svh, var(--space-7xl))
+    var(--page-padding-x) var(--space-3xl);
+  overflow: hidden;
+}
+
+.feature {
+  align-self: end;
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.7fr) minmax(18rem, 2fr) minmax(
+      14rem,
+      1.15fr
+    );
+  align-items: start;
+  gap: var(--space-2xl);
+  width: min(100%, 87.5rem);
+  margin: 0 auto;
+  min-height: 0;
+}
+
+.count {
+  display: flex;
+  align-items: baseline;
+  margin: var(--space-sm) 0 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(3.5rem, 5.25vw, 6.75rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: var(--tracking-heading);
+}
+
+.countViewport {
+  display: block;
+  height: 0.9em;
+  overflow: hidden;
+}
+
+.countStack {
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.countStack > span {
+  display: block;
+  height: 0.9em;
+  line-height: 0.9;
+}
+
+.countMuted {
+  color: var(--text-muted);
+}
+
+.media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 0.82;
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  outline: none;
+  perspective: 80rem;
+}
+
+.projectImageStack {
+  width: 100%;
+  background-color: transparent;
+}
+
+.projectLink {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+}
+
+.projectLink:focus-visible {
+  outline: 2px solid var(--brand-400);
+  outline-offset: -2px;
+}
+
+.mediaOverlay {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background-color: rgb(0 0 0 / 30%);
+  pointer-events: none;
+  will-change: opacity, visibility;
+}
+
+.showcase {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  width: min(70%, 40rem);
+  aspect-ratio: 3 / 2;
+  overflow: clip;
+  background-color: var(--brand-400);
+  color: var(--text-primary);
+  pointer-events: none;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.showcasePanel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--brand-400) 88%, white),
+    var(--brand-400)
+  );
+}
+
+.showcaseEyebrow,
+.showcaseMeta {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.showcaseTitle {
+  max-width: 12ch;
+  font-family: var(--font-family-display);
+  font-size: clamp(1.75rem, 3.4vw, 3.75rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: var(--tracking-heading);
+}
+
+.caseStudy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 19rem;
+  padding-top: var(--space-xs);
+}
+
+.projectContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  will-change: opacity, visibility;
+}
+
+.titleMask,
+.metricMask {
+  display: block;
+  overflow: clip;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 2.65vw, 3.25rem);
+  font-weight: 700;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-heading);
+  will-change: transform, opacity;
+}
+
+.description {
+  max-width: 24rem;
+  margin: var(--space-md) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.line {
+  display: block;
+  will-change: transform, opacity;
+}
+
+.metricGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin-top: var(--space-2xl);
+}
+
+.metric {
+  margin: 0;
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--bg-muted);
+  color: var(--text-primary);
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  will-change: transform, opacity;
+}
+
+.metricCaption {
+  max-width: 10rem;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  width: 100%;
+  padding-top: var(--space-2xl);
+  border-top: 1px solid var(--border-primary);
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(3.5rem, 5.2vw, 6.75rem);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: var(--tracking-heading);
+}
+
+.button {
+  flex: none;
+  color: var(--text-muted);
+  background-color: var(--bg-secondary);
+}
+
+@media (max-width: 63.9375rem) {
+  .stage {
+    gap: var(--space-3xl);
+    height: auto;
+    min-height: 100svh;
+    padding-top: clamp(var(--space-5xl), 14svh, 10rem);
+  }
+
+  .feature {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .count {
+    margin: 0;
+  }
+
+  .media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .caseStudy {
+    min-height: 17rem;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 47.9375rem) {
+  .stage {
+    min-height: 100svh;
+    padding-top: var(--space-6xl);
+    padding-bottom: var(--space-2xl);
+  }
+
+  .count {
+    font-size: clamp(3rem, 18vw, 5rem);
+  }
+
+  .title {
+    font-size: clamp(2.25rem, 12vw, 4rem);
+  }
+
+  .description {
+    max-width: none;
+  }
+
+  .showcase {
+    width: min(76%, 22rem);
+  }
+
+  .caseStudy {
+    min-height: 18rem;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .heading {
+    font-size: clamp(3.25rem, 16vw, 5rem);
+  }
 }

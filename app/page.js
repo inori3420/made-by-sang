@@ -1,4 +1,3 @@
-import { Metadata } from "next";
 import Hero from "./Components/Sections/Hero/Hero";
 import About from "./Components/Sections/About/About";
 import How from "./Components/Sections/How/How";

@@ -40,6 +40,7 @@
 
   --neutral-50: oklch(0.9848 0.0013 106.42);
   --neutral-200: oklch(0.9699 0.0013 106.42);
+  --neutral-300: oklch(0.8687 0.0043 56.37);
   --neutral-400: oklch(0.7161 0.0091 56.26);
   --neutral-600: oklch(0.4444 0.0096 73.64);
   --neutral-800: oklch(0.2685 0.0063 34.3);
@@ -52,19 +53,20 @@
   /* Backgrounds */
   --bg-primary: var(--neutral-50);
   --bg-secondary: var(--neutral-200);
+  --bg-muted: var(--neutral-300);
   --bg-inverse: var(--neutral-950);
 
   /* Text */
   --text-primary: var(--neutral-950);
   --text-secondary: var(--neutral-600);
-  --text-muted: var(--neutral-400);
+  --text-muted: var(--neutral-300);
 
   --text-inverse-primary: var(--neutral-50);
   --text-inverse-secondary: var(--neutral-200);
 
   /* Borders */
   --border-subtle: var(--neutral-200);
-  --border-default: var(--neutral-400);
+  --border-default: var(--neutral-300);
   --border-strong: var(--neutral-600);
 
   /* Brand */

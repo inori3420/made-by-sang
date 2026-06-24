@@ -173,6 +173,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 
 - Default buttons show a trailing arrow icon.
 - Hover/focus collapses the trailing icon and expands the leading icon, shifting the label to the right.
+- Disabled buttons use `--bg-muted` surfaces and `--text-primary` content at `0.3` opacity. Disabled link-style buttons render as non-link elements, do not navigate, and may reveal the `disabledLabel` text, defaulting to “Available Soon”, on hover.
 - Rapid hover in/out must kill prior timelines cleanly.
 - Keep the Button's outer footprint fixed; animate icon scale and label translation only. Do not animate icon width or margins, which causes hover hitbox feedback and layout jumping.
 - Use `LeadingIcon` and `TrailingIcon` when the two Button states need different Remix icons.
@@ -230,6 +231,18 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - The supporting paragraph waits for fonts, then uses SplitText line masks and slides upward only after the final heading has revealed; the final heading should remain visible instead of fading out.
 - Keep the paragraph hidden with `gsap.set()` until SplitText has established every line's masked starting position to prevent a pre-animation flash.
 
+### Works
+
+- The Works section is a semantic `section` with `min-height: 100svh`, a featured case-study layout, and a bottom footer row.
+- Keep the desktop composition close to the reference: left project count, center dominant image, right project title/copy/metric, then a divider with “Recent Works” and a CTA.
+- Works uses a sticky `.stage` inside a taller scroll area so the featured project frame can remain pinned while all project images scroll through.
+- The project image area uses `UI/DissolveImageStack` in contained mode (`pin={false}`) with the Works section as the ScrollTrigger source.
+- Each Works project segment uses a hold-then-transition rhythm: hold the current project for the first `70vh` of a `100vh` segment, then run the dissolve/image transition during the final `30vh`.
+- The project count is tied to the image's visual completion point, not the very end of the dissolve grid tail: it stays on the current project during the hold and transition, then slides to the next number once the next image is fully revealed; `/total` remains static.
+- The project title, description, metric, and metric caption are stacked panels that update with the completed project index. Titles/metric badges use masked slide replacement; description and metric caption use SplitText line masks with `0.1` stagger.
+- Hovering or focusing the Works image area fades in a `30%` black media overlay and reveals a centered `3:2` project showcase preview that slides up from inside the media frame with a `rotateX` reveal from `60deg` to `0deg`. Keep the preview synced to the completed project index and let GSAP own its transform so it can later be replaced with Prismic video/media content.
+- The Works media frame renders transparent active project links over the image. Only the current completed project link should receive pointer events and keyboard focus; future Prismic data can replace the placeholder `/works/{slug}` hrefs.
+
 ### GridTransition
 
 - `UI/GridTransition` renders an absolutely positioned pixel grid overlay whose cells scrub from opacity `0` to `1` with ScrollTrigger.
@@ -238,6 +251,15 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - The default `direction="random"` reveal is bottom-biased random: lower rows reveal first, with randomized cell order inside each row so it still reads as pixels rather than a clean band. Use `direction="fully-random"` only when the older everywhere-scattered behavior is desired; `direction="bottom-to-top"` and `direction="top-to-bottom"` remain available for deterministic wipes.
 - Because the component is absolutely positioned, mount it inside a positioned parent with real height. In How, render it inside `.stage` above all stage content and use the How section as its trigger, starting at `window.innerHeight * 2` and ending at `window.innerHeight * 3`, which is the final sticky scroll beat of the `400svh` section; pass `navbarTheme="default"` because the white grid covers the inverse background.
 - The component is decorative and must stay `aria-hidden`, pointer-events disabled, and scoped with `gsap.context()` cleanup.
+
+### DissolveImageStack
+
+- `UI/DissolveImageStack` is a reusable pinned image-stack transition based on the experimental `Sections/Test` script.
+- Keep all DOM access inside client effects; do not use `window` or `document` at module scope.
+- The component measures its own viewport-sized root, renders deterministic character cells, and uses one scoped ScrollTrigger to scrub image clip-path transitions plus the dissolve grid.
+- It can be used standalone as a pinned full-viewport section or as a contained media block by passing `as`, `pin={false}`, `trigger`, `start`, `end`, `height`, and `minHeight`.
+- `segmentHoldRatio` delays each image transition inside its scroll segment; for Works, use `0.7` so each project holds before the dissolve begins.
+- Clean up with `gsap.context().revert()` and avoid loose global selectors so the component can be mounted for review without leaking ScrollTriggers.
 
 ### ScrollText
 
@@ -256,6 +278,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Route changes trigger a Locomotive resize without replacing Next.js navigation behavior.
 - Locomotive's scroll callback calls `ScrollTrigger.update()`, and route resizes refresh ScrollTrigger measurements.
 - The mobile navbar pauses and resumes smooth scrolling with `locomotive-scroll:stop` and `locomotive-scroll:start` window events.
+- On a hard page refresh/load, browser scroll restoration is set to manual and the window is reset to the top before Locomotive Scroll starts.
 - Fixed or nested independently scrollable overlays should use `data-lenis-prevent`.
 - Always destroy the Locomotive instance and remove event listeners during cleanup.
 
@@ -265,6 +288,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Only animate `[data-page-transition]`, not persistent layout UI.
 - Keep the transition basic and reliable: leave fades/slides `[data-page-transition]` upward, enter fades/slides it in from below.
 - `TransitionProviders` owns the `<main data-main data-page-transition>` wrapper; keep persistent UI outside it in `layout.js`.
+- Keep `leave` and `enter` as stable callbacks, target the page through a ref, and return tween cleanup to avoid listener churn or leaked tweens.
 - Respect `prefers-reduced-motion` by skipping the transform transition.
 
 ## Responsive and accessibility requirements

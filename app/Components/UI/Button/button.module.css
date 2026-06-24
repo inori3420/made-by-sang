@@ -25,6 +25,13 @@
   color: var(--button-primary-text);
 }
 
+.disabled,
+.disabled:hover,
+.disabled:focus-visible {
+  color: var(--text-primary);
+  cursor: not-allowed;
+}
+
 .content {
   position: relative;
   display: inline-flex;
@@ -39,6 +46,17 @@
   justify-content: center;
   min-height: 2.5rem;
   background: var(--button-primary-bg);
+}
+
+.disabled .tile,
+.disabled .iconSlot {
+  background: var(--bg-muted);
+}
+
+.disabled .labelStack,
+.disabled .iconSlot svg {
+  color: var(--text-primary);
+  opacity: 0.3;
 }
 
 .label {
