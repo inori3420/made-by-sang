@@ -1,6 +1,7 @@
 import "./globals.css";
 import "./styles.css";
 import "locomotive-scroll/locomotive-scroll.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "./Components/UI/Navbar/Navbar";
 import SmoothScroll from "./Components/UI/SmoothScroll/SmoothScroll";
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
         <main data-main className="min-h-full flex flex-col">
           {children}
         </main>
+        <SpeedInsights />
       </body>
     </html>
   );

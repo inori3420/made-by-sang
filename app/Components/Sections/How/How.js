@@ -234,11 +234,9 @@ export default function How() {
 
         <div className={styles.content}>
           <p ref={contentRef}>
-            Some clients come with nothing and need to build from scratch.
-            Others have a brand but a website that doesn&apos;t do it justice.
-            Either way, I handle both sides the strategy and identity that
-            define how you show up, and the design and development that make it
-            real.
+            Most people who come to me already know something is off. The work
+            is good. The mission is clear. But the experience doesn&apos;t carry
+            it and they can feel it every time they send someone to their site.
           </p>
         </div>
       </div>
