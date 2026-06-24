@@ -148,15 +148,22 @@
 }
 
 @media (max-width: 47.9375rem) {
+  .stage {
+    height: 100dvh;
+    min-height: 100svh;
+  }
+
   .imgGroup {
     width: min(50vw, 20rem);
   }
+
   .heading {
     font-size: clamp(3.75rem, 17vw, 5.25rem);
     letter-spacing: -0.07em;
   }
 
   .content {
+    bottom: max(var(--space-lg), env(safe-area-inset-bottom));
     max-width: none;
   }
 }
