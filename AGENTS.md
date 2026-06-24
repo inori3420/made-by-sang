@@ -93,6 +93,7 @@ The root layout contains:
 ```
 
 The mobile navigation animation queries `[data-main]` and moves it horizontally. Do not remove or rename this attribute without updating `Navbar.js`.
+`TransitionProviders` owns this `<main data-main data-page-transition>` wrapper so page transitions and mobile nav target the same page layer. Keep persistent UI such as `SmoothScroll`, `Navbar`, and `SpeedInsights` outside that animated page layer.
 
 ## Styling conventions
 
@@ -214,13 +215,13 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 ### How
 
 - The How section is a full-viewport inverse canvas with its heading centered in the section and supporting copy centered near the bottom.
-- The How section uses a `300svh` scroll area with a sticky `100svh` stage so the centered composition can hold while the heading changes over two extra scroll beats.
+- The How section uses a `400svh` scroll area with one sticky `100svh` stage. Because a sticky `100svh` child inside a `400svh` parent has `300svh` of actual sticky scroll, heading/content animation finishes across the first `200svh` of sticky scroll and the grid transition runs across the final `100svh` while the same stage remains sticky.
 - The heading uses a `div` with `role="heading"` and `aria-level="2"` so each phrase can be stacked absolutely while preserving heading semantics.
 - The How heading uses `mix-blend-mode: difference` so it visually inverts against the `imgGroup` layer underneath; do not use `background-blend-mode` for this.
 - Split every heading phrase into SplitText chars after fonts are ready; each heading reveals in from the right with scrubbed `0.05` char stagger in normal reading order (`from: "start"`), so the motion travels right-to-left without reversing character order.
 - Build the heading swap timeline from the actual `[data-how-heading-phrase]` spans and their SplitText char arrays instead of hard-coding first/second/third phrase variables, so heading copy can be changed safely.
-- Keep one scrubbed ScrollTrigger timeline for heading reveal, swaps, and the final content slide-up.
-- Start the How ScrollTrigger at `top 75%` so the first heading begins revealing only once the section has visibly entered the viewport.
+- Keep one scrubbed ScrollTrigger timeline for heading reveal, swaps, and the final content slide-up, ending at `window.innerHeight * 2` so the final sticky beat is reserved for the grid transition.
+- Start the How ScrollTrigger at `top 30%` so the scrubbed stage timeline begins after the section has entered the viewport while still leaving the final sticky beat for the grid transition.
 - `imgGroup` is the How image-frame container; keep it centered in the same absolute stack as the heading, below the heading by z-index, at a `3 / 2` aspect ratio, and reveal it in the scrub timeline after the first heading finishes entering. The reveal must expand from the exact center using a collapsed center `polygon()` clip-path while rotating from `-45deg` to `0deg`, not a bottom/edge-feeling inset wipe.
 - Until Prismic imagery is added, `imgGroup` contains five absolutely stacked local placeholder images from `public/images/how/` that swap instantly once per second in an infinite CSS `steps(1, end)` loop, with a reduced-motion fallback that keeps the first image visible.
 - Heading chars should travel by viewport distance (`100vw` / `-100vw`) during swaps instead of per-character `xPercent`, so long headings fully clear before the next phrase enters.
@@ -228,6 +229,15 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Keep heading phrase parent spans responsible only for absolute centering; do not animate parent opacity during swaps, because both in and out movement should scrub at the char level.
 - The supporting paragraph waits for fonts, then uses SplitText line masks and slides upward only after the final heading has revealed; the final heading should remain visible instead of fading out.
 - Keep the paragraph hidden with `gsap.set()` until SplitText has established every line's masked starting position to prevent a pre-animation flash.
+
+### GridTransition
+
+- `UI/GridTransition` renders an absolutely positioned pixel grid overlay whose cells scrub from opacity `0` to `1` with ScrollTrigger.
+- Keep it flexible through props for `color`, `columns`, `rows`, `start`, `end`, `scrub`, `trigger`, `direction`, and `className`; color should flow through the `--grid-transition-color` CSS variable.
+- Use the optional `navbarTheme` prop when a grid overlay visually changes the background under the fixed navbar; it dispatches a scoped navbar theme override only after the grid ScrollTrigger reaches completion, not while the reveal is still in progress.
+- The default `direction="random"` reveal is bottom-biased random: lower rows reveal first, with randomized cell order inside each row so it still reads as pixels rather than a clean band. Use `direction="fully-random"` only when the older everywhere-scattered behavior is desired; `direction="bottom-to-top"` and `direction="top-to-bottom"` remain available for deterministic wipes.
+- Because the component is absolutely positioned, mount it inside a positioned parent with real height. In How, render it inside `.stage` above all stage content and use the How section as its trigger, starting at `window.innerHeight * 2` and ending at `window.innerHeight * 3`, which is the final sticky scroll beat of the `400svh` section; pass `navbarTheme="default"` because the white grid covers the inverse background.
+- The component is decorative and must stay `aria-hidden`, pointer-events disabled, and scoped with `gsap.context()` cleanup.
 
 ### ScrollText
 
@@ -248,6 +258,14 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - The mobile navbar pauses and resumes smooth scrolling with `locomotive-scroll:stop` and `locomotive-scroll:start` window events.
 - Fixed or nested independently scrollable overlays should use `data-lenis-prevent`.
 - Always destroy the Locomotive instance and remove event listeners during cleanup.
+
+### Page transitions
+
+- `Components/Providers/TransitionProviders` uses `next-transition-router` with `auto` link detection and GSAP callbacks.
+- Only animate `[data-page-transition]`, not persistent layout UI.
+- Keep the transition basic and reliable: leave fades/slides `[data-page-transition]` upward, enter fades/slides it in from below.
+- `TransitionProviders` owns the `<main data-main data-page-transition>` wrapper; keep persistent UI outside it in `layout.js`.
+- Respect `prefers-reduced-motion` by skipping the transform transition.
 
 ## Responsive and accessibility requirements
 

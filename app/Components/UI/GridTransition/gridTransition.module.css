@@ -1,0 +1,20 @@
+.gridTransition {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-transition-columns), 1fr);
+  grid-template-rows: repeat(var(--grid-transition-rows), 1fr);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cell {
+  display: block;
+  width: calc(100% + 1px);
+  height: calc(100% + 1px);
+  background-color: var(--grid-transition-color);
+  opacity: 0;
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}

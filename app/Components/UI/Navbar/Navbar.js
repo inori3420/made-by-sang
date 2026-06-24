@@ -30,8 +30,10 @@ export default function Navbar() {
   const toggleRef = useRef(null);
   const timelineRef = useRef(null);
   const isOpenRef = useRef(false);
+  const navbarThemeOverridesRef = useRef(new Map());
   const [isOpen, setIsOpen] = useState(false);
   const [isInverse, setIsInverse] = useState(false);
+  const [navbarThemeOverride, setNavbarThemeOverride] = useState(null);
 
   useLayoutEffect(() => {
     const navbar = navbarRef.current;
@@ -256,6 +258,32 @@ export default function Navbar() {
     timelineRef.current?.reverse();
   }, [pathname]);
 
+  useEffect(() => {
+    const navbarThemeOverrides = navbarThemeOverridesRef.current;
+
+    function onNavbarThemeOverride(event) {
+      const { active, source, theme } = event.detail ?? {};
+      if (!source || !theme) return;
+
+      if (active) {
+        navbarThemeOverrides.set(source, theme);
+      } else {
+        navbarThemeOverrides.delete(source);
+      }
+
+      const activeThemes = Array.from(navbarThemeOverrides.values());
+      setNavbarThemeOverride(activeThemes.at(-1) ?? null);
+    }
+
+    window.addEventListener("navbar-theme-override", onNavbarThemeOverride);
+
+    return () => {
+      window.removeEventListener("navbar-theme-override", onNavbarThemeOverride);
+      navbarThemeOverrides.clear();
+      setNavbarThemeOverride(null);
+    };
+  }, []);
+
   function toggleMenu() {
     const timeline = timelineRef.current;
     if (!timeline) return;
@@ -300,12 +328,16 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  const shouldUseInverseTheme = navbarThemeOverride
+    ? navbarThemeOverride === "inverse"
+    : isInverse;
+
   return (
     <>
       <header
         ref={navbarRef}
         className={`${styles.navbar} ${
-          isInverse ? styles.inverseTheme : ""
+          shouldUseInverseTheme ? styles.inverseTheme : ""
         } ${isOpen ? styles.menuOpen : ""}`}
         style={{
           opacity: 0,

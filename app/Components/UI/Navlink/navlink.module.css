@@ -10,7 +10,9 @@
   font-weight: var(--font-weight-semibold);
   line-height: 1;
   text-decoration: none;
-  transition: opacity 240ms var(--ease-interaction);
+  transition:
+    color 320ms var(--ease-interaction),
+    opacity 240ms var(--ease-interaction);
 }
 
 .active {

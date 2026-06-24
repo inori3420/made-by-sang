@@ -16,7 +16,7 @@
 
 .inverseTheme {
   --navbar-foreground: var(--text-inverse-primary);
-  --navbar-muted: var(--text-inverse-secondary);
+  --navbar-muted: rgb(255 255 255 / 0.55);
 }
 
 .navbar > * {
@@ -30,7 +30,7 @@
   align-items: center;
   color: var(--navbar-foreground);
   text-decoration: none;
-  transition: color 240ms var(--ease-interaction);
+  transition: color 320ms var(--ease-interaction);
 }
 
 .navigation {

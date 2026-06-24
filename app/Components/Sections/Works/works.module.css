@@ -1,0 +1,5 @@
+.works {
+  position: relative;
+  min-height: 100svh;
+  background-color: var(--bg-primary);
+}

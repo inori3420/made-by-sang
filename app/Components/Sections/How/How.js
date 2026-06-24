@@ -8,6 +8,7 @@ import {
   ScrollTrigger,
   SplitText,
 } from "../../../lib/animation";
+import GridTransition from "../../UI/GridTransition/GridTransition";
 import styles from "./how.module.css";
 
 const imageClipClosed = "polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)";
@@ -169,8 +170,9 @@ export default function How() {
 
             headingTrigger = ScrollTrigger.create({
               trigger: section,
-              start: "top -3%",
-              end: "bottom bottom",
+              start: "top 30%",
+              end: () => `+=${window.innerHeight * 2}`,
+              invalidateOnRefresh: true,
               scrub: reduceMotion ? false : true,
               animation: scrollAnimation,
             });
@@ -197,6 +199,7 @@ export default function How() {
       ref={sectionRef}
       className={styles.how}
       data-navbar-theme="inverse"
+      data-how-grid-trigger
     >
       <div className={styles.stage}>
         <div ref={imgGroupRef} className={styles.imgGroup} aria-hidden="true">
@@ -239,6 +242,16 @@ export default function How() {
             it and they can feel it every time they send someone to their site.
           </p>
         </div>
+        <GridTransition
+          className={styles.gridTransition}
+          color="var(--bg-primary)"
+          columns={12}
+          rows={8}
+          start={() => `top+=${window.innerHeight * 2} top`}
+          end={() => `top+=${window.innerHeight * 3} top`}
+          navbarTheme="default"
+          trigger="[data-how-grid-trigger]"
+        />
       </div>
     </section>
   );

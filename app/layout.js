@@ -4,6 +4,7 @@ import "locomotive-scroll/locomotive-scroll.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "./Components/UI/Navbar/Navbar";
 import SmoothScroll from "./Components/UI/SmoothScroll/SmoothScroll";
+import TransitionProviders from "./Components/Providers/TransitionProviders";
 
 export const metadata = {
   title: "Create Next App",
@@ -16,9 +17,9 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         <SmoothScroll />
         <Navbar />
-        <main data-main className="min-h-full flex flex-col">
+        <TransitionProviders>
           {children}
-        </main>
+        </TransitionProviders>
         <SpeedInsights />
       </body>
     </html>
