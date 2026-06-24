@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Hero from "./Components/Sections/Hero/Hero";
 import About from "./Components/Sections/About/About";
-import Service from "./Components/Sections/Service/Service";
+import How from "./Components/Sections/How/How";
 
 export const metadata = {
   title: "Made by Sang",
@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <Hero />
       <About />
-      <Service />
+      <How />
     </>
   );
 }

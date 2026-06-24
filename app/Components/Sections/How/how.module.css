@@ -1,0 +1,81 @@
+.how {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 300svh;
+  background-color: var(--bg-inverse);
+  color: var(--text-inverse-primary);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100svh;
+  padding: var(--section-padding-y) var(--page-padding-x);
+  overflow: hidden;
+}
+
+.imgGroup {
+  position: absolute;
+  inset: 0 50% 0 0;
+  pointer-events: none;
+}
+
+.heading {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 100%;
+  height: 1em;
+  margin: 0;
+  color: var(--text-inverse-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--text-h1);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-heading);
+  text-transform: uppercase;
+  background-blend-mode: difference;
+  overflow: hidden;
+}
+
+.heading [data-how-heading-phrase] {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  white-space: nowrap;
+}
+
+.content {
+  position: absolute;
+  bottom: clamp(var(--space-3xl), 9svh, var(--space-6xl));
+  left: 50%;
+  width: calc(100% - (var(--page-padding-x) * 2));
+  max-width: var(--max-width-sm);
+  color: var(--text-muted);
+  transform: translateX(-50%);
+}
+
+.content p {
+  text-align: center;
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.line {
+  display: block;
+  will-change: transform;
+}
+
+.char {
+  display: inline-block;
+  will-change: transform;
+}

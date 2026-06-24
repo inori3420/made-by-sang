@@ -2,8 +2,8 @@ import ScrollText from "../../UI/ScrollText/ScrollText";
 import styles from "./about.module.css";
 
 const paragraphs = [
-  "Somewhere between the sketch and the ship date is where I do my best work. Three years in, I've learned that engaging design isn't about decoration — it's about clarity.",
-  "I take complex ideas and translate them into clean, intuitive interfaces, balancing what looks right with what actually works. My favorite outcome? Users who never have to wonder where to click next.",
+  "Most businesses grow faster than their website does. The brand evolves, the offer sharpens, the work gets better but the site stays frozen, still telling the old story.",
+  "And the longer it stays that way, the more it costs. People form opinions before you ever speak to them, and a weak site loses the room before you walk in.",
 ];
 
 export default function About() {

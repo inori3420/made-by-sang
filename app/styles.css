@@ -114,8 +114,8 @@
   /* ========================================
      MAX WIDTHS
   ======================================== */
-  --max-width-sm: 20rem; /* 320 */
-  --max-width-xl: 60rem; /* 960 */
+  --max-width-sm: min(40vw, 50rem); /* 800 */
+  --max-width-xl: min(60vw, 80rem); /* 1280 */
 
   /* ========================================
      TYPOGRAPHY
@@ -139,16 +139,16 @@
 
   --text-display: clamp(5rem, calc(100vw * 0.16), 18rem);
 
-  --text-h1: clamp(6rem, 8vw, 10rem);
-  --text-h2: clamp(3rem, 4vw, 4.5rem);
-  --text-h3: clamp(2.5rem, 3.5vw, 4rem);
-  --text-h4: clamp(2rem, 2.5vw, 2.5rem);
+  --text-h1: clamp(6rem, 8vw, 12rem);
+  --text-h2: clamp(3rem, 4vw, 7rem);
+  --text-h3: clamp(2.5rem, 3.5vw, 6rem);
+  --text-h4: clamp(2rem, 2.5vw, 3rem);
   --text-h5: clamp(1.5rem, 2vw, 2rem);
 
-  --text-body-lg: 1.25rem;
-  --text-body: 1rem;
-  --text-body-sm: 0.875rem;
-  --text-caption: 0.75rem;
+  --text-body-lg: clamp(1.25rem, 1.5vw, 2rem);
+  --text-body: clamp(1rem, 1.25vw, 1.5rem);
+  --text-body-sm: clamp(0.875rem, 1vw, 1rem);
+  --text-caption: clamp(0.75rem, 0.875vw, 1.25rem);
 
   /* ========================================
      LINE HEIGHT

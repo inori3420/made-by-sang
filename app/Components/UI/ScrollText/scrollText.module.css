@@ -2,7 +2,7 @@
   margin: 0;
   color: var(--text-muted);
   font-family: var(--font-family-display);
-  font-size: var(--text-h5);
+  font-size: var(--text-h4);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-heading);
 }
@@ -12,7 +12,7 @@
 }
 
 .paragraph + .paragraph {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-2xl);
 }
 
 .word {
