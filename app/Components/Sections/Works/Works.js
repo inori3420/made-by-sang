@@ -74,6 +74,7 @@ export default function Works() {
   const numberIndexRef = useRef(0);
   const contentIndexRef = useRef(0);
   const showcaseIndexRef = useRef(0);
+  const canShowcaseRef = useRef(true);
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -102,6 +103,11 @@ export default function Works() {
         "[data-works-showcase-panel]",
         showcase,
       );
+      const isTouchLayout = window.matchMedia(
+        "(hover: none), (pointer: coarse)",
+      ).matches;
+      let showShowcase = () => {};
+      let hideShowcase = () => {};
 
       gsap.set(numberStack, { yPercent: 0 });
       gsap.set(contentItems, { autoAlpha: 0, pointerEvents: "none" });
@@ -121,6 +127,7 @@ export default function Works() {
       numberIndexRef.current = 0;
       contentIndexRef.current = 0;
       showcaseIndexRef.current = 0;
+      canShowcaseRef.current = true;
 
       contentItems.forEach((item, index) => {
         item.setAttribute("aria-hidden", index === 0 ? "false" : "true");
@@ -159,9 +166,14 @@ export default function Works() {
         gsap.set(showcaseItems, { autoAlpha: 0 });
         gsap.set(showcaseItems[index], { autoAlpha: 1 });
       };
+      let setShowcaseAvailability = (isAvailable) => {
+        canShowcaseRef.current = isAvailable;
+      };
 
       if (media && showcase) {
-        const showShowcase = () => {
+        showShowcase = () => {
+          if (!canShowcaseRef.current) return;
+
           gsap.to(mediaOverlay, {
             autoAlpha: 1,
             duration: prefersReducedMotion ? 0 : 0.35,
@@ -178,7 +190,7 @@ export default function Works() {
             overwrite: "auto",
           });
         };
-        const hideShowcase = () => {
+        hideShowcase = () => {
           gsap.to(mediaOverlay, {
             autoAlpha: 0,
             duration: prefersReducedMotion ? 0 : 0.3,
@@ -196,16 +208,30 @@ export default function Works() {
           });
         };
 
-        media.addEventListener("pointerenter", showShowcase);
-        media.addEventListener("pointerleave", hideShowcase);
-        media.addEventListener("focusin", showShowcase);
-        media.addEventListener("focusout", hideShowcase);
+        setShowcaseAvailability = (isAvailable) => {
+          if (canShowcaseRef.current === isAvailable) return;
+
+          canShowcaseRef.current = isAvailable;
+
+          if (!isAvailable) {
+            hideShowcase();
+          }
+        };
+
+        if (!isTouchLayout) {
+          media.addEventListener("pointerenter", showShowcase);
+          media.addEventListener("pointerleave", hideShowcase);
+          media.addEventListener("focusin", showShowcase);
+          media.addEventListener("focusout", hideShowcase);
+        }
 
         cleanupShowcase = () => {
-          media.removeEventListener("pointerenter", showShowcase);
-          media.removeEventListener("pointerleave", hideShowcase);
-          media.removeEventListener("focusin", showShowcase);
-          media.removeEventListener("focusout", hideShowcase);
+          if (!isTouchLayout) {
+            media.removeEventListener("pointerenter", showShowcase);
+            media.removeEventListener("pointerleave", hideShowcase);
+            media.removeEventListener("focusin", showShowcase);
+            media.removeEventListener("focusout", hideShowcase);
+          }
         };
       }
 
@@ -378,6 +404,11 @@ export default function Works() {
                 segmentProgress >= projectVisualCompleteRatio
                   ? activeSegment + 1
                   : activeSegment;
+              const isTransitioning =
+                segmentProgress > projectTransitionHoldRatio &&
+                segmentProgress < projectVisualCompleteRatio;
+
+              setShowcaseAvailability(!isTransitioning);
 
               if (completedIndex === numberIndexRef.current) return;
 
@@ -393,6 +424,10 @@ export default function Works() {
               setContentPanel(completedIndex);
               setShowcasePanel(completedIndex);
               setProjectLink(completedIndex);
+
+              if (isTouchLayout) {
+                showShowcase();
+              }
             },
           });
         });
@@ -409,7 +444,9 @@ export default function Works() {
       gsap.killTweensOf(section.querySelector("[data-works-media-overlay]"));
       gsap.killTweensOf(section.querySelector("[data-works-showcase]"));
       gsap.killTweensOf(gsap.utils.toArray("[data-works-project]", section));
-      gsap.killTweensOf(gsap.utils.toArray("[data-works-project-link]", section));
+      gsap.killTweensOf(
+        gsap.utils.toArray("[data-works-project-link]", section),
+      );
       context.revert();
     };
   }, []);
@@ -424,118 +461,136 @@ export default function Works() {
     >
       <div className={styles.stage}>
         <div className={styles.feature}>
-          <p className={styles.count} aria-label="Project 1 of 5">
-            <span className={styles.countViewport}>
-              <span ref={numberStackRef} className={styles.countStack}>
-                {projects.map((project, index) => (
-                  <span key={project.title}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                ))}
+          <div className={styles.indexColumn}>
+            <h2 id="works-heading" className={styles.kicker}>
+              <span className={styles.kickerDot} aria-hidden="true" />
+              <span>Recent works</span>
+            </h2>
+            <p className={styles.count} aria-label="Project 1 of 5">
+              <span className={styles.countViewport}>
+                <span ref={numberStackRef} className={styles.countStack}>
+                  {projects.map((project, index) => (
+                    <span key={project.title}>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  ))}
+                </span>
               </span>
-            </span>
-            <span className={styles.countMuted}>
-              /{String(projects.length).padStart(2, "0")}
-            </span>
-          </p>
-
-          <figure
-            className={styles.media}
-            data-works-media
-            tabIndex={0}
-            aria-label="Reveal project showcase preview"
-          >
-            <DissolveImageStack
-              as="div"
-              className={styles.projectImageStack}
-              images={projects.map((project) => project.image)}
-              imageSizes="(max-width: 767px) 100vw, 42vw"
-              navbarTheme={null}
-              pin={false}
-              segmentHoldRatio={projectTransitionHoldRatio}
-              trigger="[data-works]"
-              start="top top"
-              end={() => `+=${(projects.length - 1) * window.innerHeight}`}
-              height="100%"
-              minHeight="0"
-            />
-            {projects.map((project, index) => (
-              <Link
-                key={project.href}
-                href={project.href}
-                className={styles.projectLink}
-                data-works-project-link
-                aria-label={`Open ${project.title} project`}
-                aria-hidden={index === 0 ? "false" : "true"}
-                tabIndex={index === 0 ? 0 : -1}
-              />
-            ))}
-            <div
-              className={styles.mediaOverlay}
-              data-works-media-overlay
-              aria-hidden="true"
-            />
-            <div
-              className={styles.showcase}
-              data-works-showcase
-              aria-hidden="true"
+              <span className={styles.countMuted}>
+                /{String(projects.length).padStart(2, "0")}
+              </span>
+            </p>
+            <Button
+              disabled={true}
+              href="/works"
+              className={`${styles.button} ${styles.indexButton}`}
             >
+              View all works
+            </Button>
+          </div>
+
+          <div className={styles.workGroup}>
+            <figure
+              className={styles.media}
+              data-works-media
+              tabIndex={0}
+              aria-label="Reveal project showcase preview"
+            >
+              <DissolveImageStack
+                as="div"
+                className={styles.projectImageStack}
+                images={projects.map((project) => project.image)}
+                imageSizes="(max-width: 767px) 100vw, 42vw"
+                navbarTheme={null}
+                pin={false}
+                segmentHoldRatio={projectTransitionHoldRatio}
+                trigger="[data-works]"
+                start="top top"
+                end={() => `+=${(projects.length - 1) * window.innerHeight}`}
+                height="100%"
+                minHeight="0"
+              />
+              {projects.map((project, index) => (
+                <Link
+                  key={project.href}
+                  href={project.href}
+                  className={styles.projectLink}
+                  data-works-project-link
+                  aria-label={`Open ${project.title} project`}
+                  aria-hidden={index === 0 ? "false" : "true"}
+                  tabIndex={index === 0 ? 0 : -1}
+                />
+              ))}
+              <div
+                className={styles.mediaOverlay}
+                data-works-media-overlay
+                aria-hidden="true"
+              />
+              <div
+                className={styles.showcase}
+                data-works-showcase
+                aria-hidden="true"
+              >
+                {projects.map((project, index) => (
+                  <div
+                    key={project.title}
+                    className={styles.showcasePanel}
+                    data-works-showcase-panel
+                    aria-hidden={index === 0 ? "false" : "true"}
+                  >
+                    <span className={styles.showcaseEyebrow}>
+                      Project showcase
+                    </span>
+                    <span className={styles.showcaseTitle}>
+                      {project.title}
+                    </span>
+                    <span className={styles.showcaseMeta}>
+                      Video / motion preview
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </figure>
+
+            <article className={styles.caseStudy} aria-live="polite">
               {projects.map((project, index) => (
                 <div
                   key={project.title}
-                  className={styles.showcasePanel}
-                  data-works-showcase-panel
+                  className={styles.projectContent}
+                  data-works-project
                   aria-hidden={index === 0 ? "false" : "true"}
                 >
-                  <span className={styles.showcaseEyebrow}>
-                    Project showcase
-                  </span>
-                  <span className={styles.showcaseTitle}>{project.title}</span>
-                  <span className={styles.showcaseMeta}>
-                    Video / motion preview
-                  </span>
-                </div>
-              ))}
-            </div>
-          </figure>
+                  <div className={styles.titleMask}>
+                    <h3 className={styles.title} data-works-title>
+                      {project.title}
+                    </h3>
+                  </div>
+                  <p className={styles.description} data-works-line-mask>
+                    {project.description}
+                  </p>
 
-          <article className={styles.caseStudy} aria-live="polite">
-            {projects.map((project, index) => (
-              <div
-                key={project.title}
-                className={styles.projectContent}
-                data-works-project
-                aria-hidden={index === 0 ? "false" : "true"}
-              >
-                <div className={styles.titleMask}>
-                  <h3 className={styles.title} data-works-title>
-                    {project.title}
-                  </h3>
-                </div>
-                <p className={styles.description} data-works-line-mask>
-                  {project.description}
-                </p>
-
-                <div className={styles.metricGroup}>
-                  <div className={styles.metricMask}>
-                    <p className={styles.metric} data-works-metric>
-                      {project.metric}
+                  <div className={styles.metricGroup}>
+                    <div className={styles.metricMask}>
+                      <p className={styles.metric} data-works-metric>
+                        {project.metric}
+                      </p>
+                    </div>
+                    <p className={styles.metricCaption} data-works-line-mask>
+                      {project.metricCaption}
                     </p>
                   </div>
-                  <p className={styles.metricCaption} data-works-line-mask>
-                    {project.metricCaption}
-                  </p>
                 </div>
-              </div>
-            ))}
-          </article>
+              ))}
+            </article>
+          </div>
         </div>
 
         <div className={styles.footer}>
-          <h2 id="works-heading" className={styles.heading}>
-            Recent Works
-          </h2>
-          <Button disabled={true} href="/works" className={styles.button}>
+          <Button
+            disabled={true}
+            href="/works"
+            className={`${styles.button} ${styles.mobileButton}`}
+          >
             View all works
           </Button>
         </div>

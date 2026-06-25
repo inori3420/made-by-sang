@@ -8,7 +8,6 @@ import {
   ScrollTrigger,
   SplitText,
 } from "../../../lib/animation";
-import GridTransition from "../../UI/GridTransition/GridTransition";
 import styles from "./how.module.css";
 
 const imageClipClosed = "polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%)";
@@ -20,6 +19,14 @@ const placeholderImages = [
   "/images/how/placeholder-4.png",
   "/images/how/placeholder-5.png",
 ];
+const compactMediaQuery = "(max-width: 63.9375rem)";
+const getCompactLayout = () => window.matchMedia(compactMediaQuery).matches;
+const getStageTimelineEnd = () =>
+  window.innerHeight * (getCompactLayout() ? 1.7 : 2);
+const getGridTransitionStart = () =>
+  window.innerHeight * (getCompactLayout() ? 1.7 : 2);
+const getGridTransitionEnd = () =>
+  window.innerHeight * (getCompactLayout() ? 2 : 2.5);
 
 export default function How() {
   const sectionRef = useRef(null);
@@ -171,7 +178,7 @@ export default function How() {
             headingTrigger = ScrollTrigger.create({
               trigger: section,
               start: "top 30%",
-              end: () => `+=${window.innerHeight * 2}`,
+              end: () => `+=${getStageTimelineEnd()}`,
               invalidateOnRefresh: true,
               scrub: reduceMotion ? false : true,
               animation: scrollAnimation,
@@ -242,16 +249,6 @@ export default function How() {
             it and they can feel it every time they send someone to their site.
           </p>
         </div>
-        <GridTransition
-          className={styles.gridTransition}
-          color="var(--bg-primary)"
-          columns={12}
-          rows={8}
-          start={() => `top+=${window.innerHeight * 2} top`}
-          end={() => `top+=${window.innerHeight * 3} top`}
-          navbarTheme="default"
-          trigger="[data-how-grid-trigger]"
-        />
       </div>
     </section>
   );

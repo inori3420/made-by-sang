@@ -2,7 +2,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 400svh;
+  min-height: 350svh;
   background-color: var(--bg-inverse);
   color: var(--text-inverse-primary);
 }
@@ -149,6 +149,12 @@
 
   .imgBox:first-child {
     opacity: 1;
+  }
+}
+
+@media (max-width: 63.9375rem) {
+  .how {
+    min-height: 300svh;
   }
 }
 

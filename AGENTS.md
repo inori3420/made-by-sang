@@ -216,7 +216,8 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 ### How
 
 - The How section is a full-viewport inverse canvas with its heading centered in the section and supporting copy centered near the bottom.
-- The How section uses a `400svh` scroll area with one sticky `100svh` stage. Because a sticky `100svh` child inside a `400svh` parent has `300svh` of actual sticky scroll, heading/content animation finishes across the first `200svh` of sticky scroll and the grid transition runs across the final `100svh` while the same stage remains sticky.
+- The How section uses a `350svh` scroll area with one sticky `100svh` stage. Because a sticky `100svh` child inside a `350svh` parent has `250svh` of actual sticky scroll, heading/content animation finishes across the first `200svh` of sticky scroll and the grid transition runs across the final `50svh` while the same stage remains sticky; keep the grid transition ending at sticky release so it does not create a dead white viewport before Works.
+- On tablet and mobile (`max-width: 63.9375rem`), shorten How to `300svh`: heading/content should finish at `window.innerHeight * 1.7`, and the grid transition should run from `1.7` to `2.0` viewport heights so Works arrives without a long blank transition gap.
 - The heading uses a `div` with `role="heading"` and `aria-level="2"` so each phrase can be stacked absolutely while preserving heading semantics.
 - The How heading uses `mix-blend-mode: difference` so it visually inverts against the `imgGroup` layer underneath; do not use `background-blend-mode` for this.
 - Split every heading phrase into SplitText chars after fonts are ready; each heading reveals in from the right with scrubbed `0.05` char stagger in normal reading order (`from: "start"`), so the motion travels right-to-left without reversing character order.
@@ -233,14 +234,16 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 
 ### Works
 
-- The Works section is a semantic `section` with `min-height: 100svh`, a featured case-study layout, and a bottom footer row.
-- Keep the desktop composition close to the reference: left project count, center dominant image, right project title/copy/metric, then a divider with “Recent Works” and a CTA.
+- The Works section is a semantic `section` with `min-height: 100svh` and a featured case-study layout.
+- Keep the desktop composition close to the current reference: left “Recent works” kicker plus project count and CTA, center dominant project image, and right project title/copy/metric.
+- Works no longer uses the muted “And More” footer label. On desktop, place the disabled “View all works” CTA at the bottom of the left index/count column. On tablet, place that CTA to the right of the project counter. On mobile, keep only the bottom CTA row and hide the index-column CTA.
 - Works uses a sticky `.stage` inside a taller scroll area so the featured project frame can remain pinned while all project images scroll through.
+- The full Works stage must fit inside `100svh`; on desktop/tablet, the removed footer space belongs to the media area, so keep the media sized from the stage height budget instead of reserving a footer row.
 - The project image area uses `UI/DissolveImageStack` in contained mode (`pin={false}`) with the Works section as the ScrollTrigger source.
 - Each Works project segment uses a hold-then-transition rhythm: hold the current project for the first `70vh` of a `100vh` segment, then run the dissolve/image transition during the final `30vh`.
 - The project count is tied to the image's visual completion point, not the very end of the dissolve grid tail: it stays on the current project during the hold and transition, then slides to the next number once the next image is fully revealed; `/total` remains static.
 - The project title, description, metric, and metric caption are stacked panels that update with the completed project index. Titles/metric badges use masked slide replacement; description and metric caption use SplitText line masks with `0.1` stagger.
-- Hovering or focusing the Works image area fades in a `30%` black media overlay and reveals a centered `3:2` project showcase preview that slides up from inside the media frame with a `rotateX` reveal from `60deg` to `0deg`. Keep the preview synced to the completed project index and let GSAP own its transform so it can later be replaced with Prismic video/media content.
+- Hovering or focusing the Works image area fades in a `30%` black media overlay and reveals a centered `3:2` project showcase preview that slides up from inside the media frame with a `rotateX` reveal from `60deg` to `0deg`. Disable and force-hide this showcase during the active dissolve/image transition window; it should only open while a project image is settled. Keep the preview synced to the completed project index and let GSAP own its transform so it can later be replaced with Prismic video/media content.
 - The Works media frame renders transparent active project links over the image. Only the current completed project link should receive pointer events and keyboard focus; future Prismic data can replace the placeholder `/works/{slug}` hrefs.
 
 ### GridTransition
@@ -249,7 +252,8 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Keep it flexible through props for `color`, `columns`, `rows`, `start`, `end`, `scrub`, `trigger`, `direction`, and `className`; color should flow through the `--grid-transition-color` CSS variable.
 - Use the optional `navbarTheme` prop when a grid overlay visually changes the background under the fixed navbar; it dispatches a scoped navbar theme override only after the grid ScrollTrigger reaches completion, not while the reveal is still in progress.
 - The default `direction="random"` reveal is bottom-biased random: lower rows reveal first, with randomized cell order inside each row so it still reads as pixels rather than a clean band. Use `direction="fully-random"` only when the older everywhere-scattered behavior is desired; `direction="bottom-to-top"` and `direction="top-to-bottom"` remain available for deterministic wipes.
-- Because the component is absolutely positioned, mount it inside a positioned parent with real height. In How, render it inside `.stage` above all stage content and use the How section as its trigger, starting at `window.innerHeight * 2` and ending at `window.innerHeight * 3`, which is the final sticky scroll beat of the `400svh` section; pass `navbarTheme="default"` because the white grid covers the inverse background.
+- Because the component is absolutely positioned, mount it inside a positioned parent with real height. In How, render it inside `.stage` above all stage content and use the How section as its trigger, starting at `window.innerHeight * 2` and ending at `window.innerHeight * 2.5`, which is the final shortened sticky scroll beat of the `350svh` section; pass `navbarTheme="default"` because the white grid covers the inverse background.
+- For How on tablet/mobile, use the responsive GridTransition timing helpers instead of the desktop `2 → 2.5` viewport range; the compact range is `1.7 → 2.0` viewport heights to prevent excess white scroll before Works.
 - The component is decorative and must stay `aria-hidden`, pointer-events disabled, and scoped with `gsap.context()` cleanup.
 
 ### DissolveImageStack
