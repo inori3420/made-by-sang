@@ -18,7 +18,6 @@ const navigation = [
   { label: "Index", href: "/" },
   { label: "About", href: "/about" },
   { label: "Works", href: "/works" },
-  { label: "Archive", href: "/archive" },
 ];
 
 export default function Navbar() {
@@ -278,7 +277,10 @@ export default function Navbar() {
     window.addEventListener("navbar-theme-override", onNavbarThemeOverride);
 
     return () => {
-      window.removeEventListener("navbar-theme-override", onNavbarThemeOverride);
+      window.removeEventListener(
+        "navbar-theme-override",
+        onNavbarThemeOverride,
+      );
       navbarThemeOverrides.clear();
       setNavbarThemeOverride(null);
     };

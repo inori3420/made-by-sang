@@ -1,6 +1,6 @@
 .navbar {
   --navbar-foreground: var(--text-primary);
-  --navbar-muted: var(--text-muted);
+  --navbar-muted: var(--text-primary);
 
   position: fixed;
   z-index: 10;
@@ -16,7 +16,7 @@
 
 .inverseTheme {
   --navbar-foreground: var(--text-inverse-primary);
-  --navbar-muted: rgb(255 255 255 / 0.55);
+  --navbar-muted: var(--text-inverse-primary);
 }
 
 .navbar > * {

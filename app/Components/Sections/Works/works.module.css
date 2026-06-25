@@ -12,8 +12,7 @@
   --works-stage-padding-bottom: var(--space-lg);
   --works-stage-gap: clamp(var(--space-md), 2.5svh, var(--space-xl));
   --works-media-size: calc(
-    100svh - var(--works-stage-padding-top) -
-      var(--works-stage-padding-bottom)
+    100svh - var(--works-stage-padding-top) - var(--works-stage-padding-bottom)
   );
 
   position: sticky;
@@ -109,6 +108,17 @@
 }
 
 .media {
+  --works-shader-strength: 0;
+  --works-shader-y: 0px;
+  --works-shader-skew: 0deg;
+  --works-shader-blur: 0px;
+  --works-shader-scale: 1;
+  --works-shader-saturate: 1;
+  --works-shader-contrast: 1;
+  --works-shader-overlay-y: 0px;
+  --works-shader-overlay-skew: 0deg;
+  --works-shader-overlay-scale: 1;
+
   position: relative;
   align-self: start;
   justify-self: end;
@@ -126,6 +136,43 @@
   height: 100%;
   min-height: 0;
   background-color: transparent;
+  filter:
+    saturate(var(--works-shader-saturate))
+    contrast(var(--works-shader-contrast))
+    blur(var(--works-shader-blur));
+  transform:
+    translate3d(0, var(--works-shader-y), 0)
+    scale(var(--works-shader-scale))
+    skewY(var(--works-shader-skew));
+  transform-origin: 50% 50%;
+  will-change: transform, filter;
+}
+
+.shaderLayer {
+  position: absolute;
+  z-index: 1;
+  inset: -8%;
+  pointer-events: none;
+  opacity: var(--works-shader-strength);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.2) 0 1px,
+      transparent 1px 12px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 10px,
+      rgb(0 0 0 / 0.12) 10px 11px
+    ),
+    radial-gradient(circle at 50% 50%, rgb(255 255 255 / 0.22), transparent 58%);
+  mix-blend-mode: screen;
+  transform:
+    translate3d(0, var(--works-shader-overlay-y), 0)
+    scale(var(--works-shader-overlay-scale))
+    skewY(var(--works-shader-overlay-skew));
+  transform-origin: 50% 50%;
+  will-change: opacity, transform;
 }
 
 .projectLink {
@@ -452,9 +499,7 @@
 
   .footer {
     display: flex;
-    align-items: flex-end;
-    flex-direction: row;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: var(--space-md);
     padding-top: var(--space-xs);
     border-top: 0;
@@ -465,6 +510,6 @@
   }
 
   .mobileButton {
-    display: inline-flex;
+    display: block;
   }
 }

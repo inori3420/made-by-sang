@@ -16,6 +16,7 @@ export default function Home() {
       <About />
       <How />
       <Works />
+      <section className="h-screen bg-black"></section>
     </>
   );
 }

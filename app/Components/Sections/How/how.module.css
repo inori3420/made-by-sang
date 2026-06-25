@@ -2,7 +2,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 350svh;
+  min-height: 300svh;
   background-color: var(--bg-inverse);
   color: var(--text-inverse-primary);
 }

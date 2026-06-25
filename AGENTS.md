@@ -243,7 +243,9 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Each Works project segment uses a hold-then-transition rhythm: hold the current project for the first `70vh` of a `100vh` segment, then run the dissolve/image transition during the final `30vh`.
 - The project count is tied to the image's visual completion point, not the very end of the dissolve grid tail: it stays on the current project during the hold and transition, then slides to the next number once the next image is fully revealed; `/total` remains static.
 - The project title, description, metric, and metric caption are stacked panels that update with the completed project index. Titles/metric badges use masked slide replacement; description and metric caption use SplitText line masks with `0.1` stagger.
+- The Works media frame has a scroll-velocity “shader” pass inspired by Codrops ShaderOnScroll: ScrollTrigger velocity updates CSS variables for media translate/skew/scale/blur/saturation plus a scanline/noise overlay, then eases those variables back to neutral when scrolling settles. Keep this effect transform/filter based unless a future request explicitly asks for a full Three.js shader mesh implementation.
 - Hovering or focusing the Works image area fades in a `30%` black media overlay and reveals a centered `3:2` project showcase preview that slides up from inside the media frame with a `rotateX` reveal from `60deg` to `0deg`. Disable and force-hide this showcase during the active dissolve/image transition window; it should only open while a project image is settled. Keep the preview synced to the completed project index and let GSAP own its transform so it can later be replaced with Prismic video/media content.
+- On touch layouts where hover is unavailable, auto-reveal the Works showcase when a project image is settled, including the initial first project state.
 - The Works media frame renders transparent active project links over the image. Only the current completed project link should receive pointer events and keyboard focus; future Prismic data can replace the placeholder `/works/{slug}` hrefs.
 
 ### GridTransition
@@ -264,6 +266,17 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - It can be used standalone as a pinned full-viewport section or as a contained media block by passing `as`, `pin={false}`, `trigger`, `start`, `end`, `height`, and `minHeight`.
 - `segmentHoldRatio` delays each image transition inside its scroll segment; for Works, use `0.7` so each project holds before the dissolve begins.
 - Clean up with `gsap.context().revert()` and avoid loose global selectors so the component can be mounted for review without leaking ScrollTriggers.
+
+### InfiniteCanvas
+
+- `UI/InfiniteCanvas` powers the `/works` page as a 2D DOM/CSS implementation of the Infinite Canvas technical direction, not a Three.js scene.
+- Keep the illusion of infinity by rendering only nearby deterministic cells around the camera. The default design is an editorial seven-column contact-sheet grid; tile placement must be derived from grid coordinates and seeded randomness so the same location always regenerates the same layout.
+- Feed the component a finite `images` array; tile image selection wraps with modulo so future Prismic project data can replace the placeholder array without changing the canvas engine.
+- Pointer drag pans the camera, normal wheel/trackpad pans the canvas, modified wheel/pinch-style input zooms around the cursor, arrow keys pan, and `+` / `-` zoom. Keep inertia inside a single `requestAnimationFrame` loop and clean up the frame on unmount.
+- Press/hold scales and tilts the inner `.world` canvas plane, not the clipped viewport/root. The whole grid plane should skew/rotate from current camera velocity during drag and inertia; keep this as transform-only motion so the seven-column layout does not reflow.
+- Keep pointer, wheel, keyboard, `tabIndex`, and `data-lenis-prevent` on the inner `.canvas`, not the root `<section>`, so fixed persistent UI such as Navbar remains clickable above the page.
+- Placeholder grid tiles are decorative and non-interactive until a real project-detail route or click-to-focus behavior is intentionally added; do not fill the infinite grid with repeated links back to `/works`.
+- Keep the route page server-rendered and pass serializable image data into the client canvas component.
 
 ### ScrollText
 
