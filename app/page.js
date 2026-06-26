@@ -3,6 +3,7 @@ import About from "./Components/Sections/About/About";
 import How from "./Components/Sections/How/How";
 import Works from "./Components/Sections/Works/Works";
 import Footer from "./Components/Sections/Footer/Footer";
+import FooterShaders from "./Components/UI/FooterShader/FooterShaders";
 
 export const metadata = {
   title: "Made by Sang",

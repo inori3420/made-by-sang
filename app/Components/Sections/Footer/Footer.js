@@ -5,8 +5,8 @@ import { useLayoutEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "../../../lib/animation";
 import Button from "../../UI/Button/Button";
 import Navlink from "../../UI/Navlink/Navlink";
-import SignalLandscape from "../SignalLandscape/SignalLandscape";
 import styles from "./footer.module.css";
+import FooterShaders from "../../UI/FooterShader/FooterShaders";
 
 const navigation = [
   { label: "Index", href: "/" },
@@ -101,14 +101,11 @@ export default function Footer() {
       data-navbar-theme="inverse"
       aria-label="Footer"
     >
-      <div className={styles.signalLayer} aria-hidden="true">
-        <SignalLandscape
-          as="div"
-          className={styles.signal}
-          decorative
-          navbarTheme={null}
-        />
-      </div>
+      <FooterShaders
+        decorative={false}
+        className={styles.signalLayer}
+        navbarTheme="inverse"
+      />
 
       <footer ref={footerRef} className={styles.footer}>
         <div className={styles.content}>
