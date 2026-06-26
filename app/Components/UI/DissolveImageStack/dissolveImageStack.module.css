@@ -22,11 +22,18 @@
 
 .imageLayer {
   overflow: hidden;
-  will-change: clip-path;
+  transform: translate3d(0, var(--dissolve-layer-y, 0%), 0);
+  backface-visibility: hidden;
+  contain: paint;
+  will-change: transform;
 }
 
 .image {
   object-fit: cover;
+  transform: translate3d(0, var(--dissolve-image-y, 0%), 0) scale(1.002);
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .dissolveGrid {

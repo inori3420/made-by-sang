@@ -5,6 +5,8 @@ import styles from "./heading.module.css";
 import { gsap, interactionEase } from "../../../lib/animation";
 import * as THREE from "three";
 
+const maxRenderPixelRatio = 1.5;
+
 export default function Heading() {
   const canvasRef = useRef(null);
 
@@ -57,8 +59,12 @@ export default function Heading() {
         };
       }
 
+      function getRenderPixelRatio() {
+        return Math.min(window.devicePixelRatio || 1, maxRenderPixelRatio);
+      }
+
       function buildTexture(w, h) {
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = getRenderPixelRatio();
         const off = document.createElement("canvas");
         const padPx = 20 * dpr;
         const text = "MADEBY©SANG";
@@ -204,7 +210,7 @@ export default function Heading() {
 
       // Pass canvas directly — no size args so Three.js won't override CSS
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      renderer.setPixelRatio(getRenderPixelRatio());
       renderer.setSize(w, h, false); // false = don't override CSS width/height
 
       // ─── GSAP entrance ───────────────────────────────────────────────────────
@@ -233,6 +239,7 @@ export default function Heading() {
       let prevPosition = { x: 0.5, y: 0.5 };
       let aberrationIntensity = 0.0;
       let animFrameId;
+      let resizeFrameId;
 
       // ─── Render loop ─────────────────────────────────────────────────────────
       function animate() {
@@ -260,17 +267,23 @@ export default function Heading() {
       animate();
 
       // ─── Resize ──────────────────────────────────────────────────────────────
-      function onResize() {
+      function updateSize() {
         const s = getSize();
         w = s.w;
         h = s.h;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         sizePlaneToViewport(planeMesh, camera, w, h);
+        renderer.setPixelRatio(getRenderPixelRatio());
         renderer.setSize(w, h, false);
         const newTex = new THREE.CanvasTexture(buildTexture(w, h));
         shaderUniforms.u_texture.value.dispose();
         shaderUniforms.u_texture.value = newTex;
+      }
+
+      function onResize() {
+        cancelAnimationFrame(resizeFrameId);
+        resizeFrameId = requestAnimationFrame(updateSize);
       }
       window.addEventListener("resize", onResize);
 
@@ -305,13 +318,16 @@ export default function Heading() {
       // ─── Cleanup ─────────────────────────────────────────────────────────────
       cleanup = () => {
         cancelAnimationFrame(animFrameId);
+        cancelAnimationFrame(resizeFrameId);
         window.removeEventListener("resize", onResize);
         canvas.removeEventListener("mousemove", onMouseMove);
         canvas.removeEventListener("mouseenter", onMouseEnter);
         canvas.removeEventListener("mouseleave", onMouseLeave);
         gsapContext.revert();
-        renderer.dispose();
         shaderUniforms.u_texture.value.dispose();
+        planeMesh.geometry.dispose();
+        planeMesh.material.dispose();
+        renderer.dispose();
       };
     }
 

@@ -82,7 +82,6 @@ export default function Works() {
     let cancelled = false;
     let contentSplits = [];
     let cleanupShowcase = () => {};
-    let shaderResetCall;
 
     if (!section || !numberStack) return undefined;
 
@@ -140,129 +139,6 @@ export default function Works() {
       showcaseItems.forEach((item, index) => {
         item.setAttribute("aria-hidden", index === 0 ? "false" : "true");
       });
-
-      if (media) {
-        const setShaderStrength = gsap.quickTo(
-          media,
-          "--works-shader-strength",
-          {
-            duration: prefersReducedMotion ? 0 : 0.3,
-            ease: "power3.out",
-          },
-        );
-        const setShaderY = gsap.quickTo(media, "--works-shader-y", {
-          duration: prefersReducedMotion ? 0 : 0.34,
-          ease: "power3.out",
-        });
-        const setShaderSkew = gsap.quickTo(media, "--works-shader-skew", {
-          duration: prefersReducedMotion ? 0 : 0.34,
-          ease: "power3.out",
-        });
-        const setShaderBlur = gsap.quickTo(media, "--works-shader-blur", {
-          duration: prefersReducedMotion ? 0 : 0.3,
-          ease: "power3.out",
-        });
-        const setShaderScale = gsap.quickTo(media, "--works-shader-scale", {
-          duration: prefersReducedMotion ? 0 : 0.34,
-          ease: "power3.out",
-        });
-        const setShaderSaturate = gsap.quickTo(
-          media,
-          "--works-shader-saturate",
-          {
-            duration: prefersReducedMotion ? 0 : 0.3,
-            ease: "power3.out",
-          },
-        );
-        const setShaderContrast = gsap.quickTo(
-          media,
-          "--works-shader-contrast",
-          {
-            duration: prefersReducedMotion ? 0 : 0.3,
-            ease: "power3.out",
-          },
-        );
-        const setShaderOverlayY = gsap.quickTo(
-          media,
-          "--works-shader-overlay-y",
-          {
-            duration: prefersReducedMotion ? 0 : 0.34,
-            ease: "power3.out",
-          },
-        );
-        const setShaderOverlaySkew = gsap.quickTo(
-          media,
-          "--works-shader-overlay-skew",
-          {
-            duration: prefersReducedMotion ? 0 : 0.34,
-            ease: "power3.out",
-          },
-        );
-        const setShaderOverlayScale = gsap.quickTo(
-          media,
-          "--works-shader-overlay-scale",
-          {
-            duration: prefersReducedMotion ? 0 : 0.34,
-            ease: "power3.out",
-          },
-        );
-
-        const resetShader = () => {
-          setShaderStrength(0);
-          setShaderY("0px");
-          setShaderSkew("0deg");
-          setShaderBlur("0px");
-          setShaderScale(1);
-          setShaderSaturate(1);
-          setShaderContrast(1);
-          setShaderOverlayY("0px");
-          setShaderOverlaySkew("0deg");
-          setShaderOverlayScale(1);
-        };
-
-        gsap.set(media, {
-          "--works-shader-strength": 0,
-          "--works-shader-y": "0px",
-          "--works-shader-skew": "0deg",
-          "--works-shader-blur": "0px",
-          "--works-shader-scale": 1,
-          "--works-shader-saturate": 1,
-          "--works-shader-contrast": 1,
-          "--works-shader-overlay-y": "0px",
-          "--works-shader-overlay-skew": "0deg",
-          "--works-shader-overlay-scale": 1,
-        });
-
-        if (!prefersReducedMotion) {
-          ScrollTrigger.create({
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            onUpdate: (self) => {
-              const velocity = self.getVelocity();
-              const strength = gsap.utils.clamp(0, 1, Math.abs(velocity) / 3600);
-              const y = gsap.utils.clamp(-18, 18, velocity * -0.006);
-              const skew = gsap.utils.clamp(-4, 4, velocity * -0.0015);
-
-              setShaderStrength(strength);
-              setShaderY(`${y}px`);
-              setShaderSkew(`${skew}deg`);
-              setShaderBlur(`${strength * 1.15}px`);
-              setShaderScale(1 + strength * 0.045);
-              setShaderSaturate(1 + strength);
-              setShaderContrast(1 + strength * 0.16);
-              setShaderOverlayY(`${y * -0.65}px`);
-              setShaderOverlaySkew(`${skew * -0.7}deg`);
-              setShaderOverlayScale(1 + strength * 0.08);
-
-              shaderResetCall?.kill();
-              shaderResetCall = gsap.delayedCall(0.13, resetShader);
-            },
-            onLeave: resetShader,
-            onLeaveBack: resetShader,
-          });
-        }
-      }
 
       const setProjectLink = (index) => {
         projectLinks.forEach((link, linkIndex) => {
@@ -570,7 +446,6 @@ export default function Works() {
       gsap.killTweensOf(section.querySelector("[data-works-media-overlay]"));
       gsap.killTweensOf(section.querySelector("[data-works-showcase]"));
       gsap.killTweensOf(section.querySelector("[data-works-media]"));
-      shaderResetCall?.kill();
       gsap.killTweensOf(gsap.utils.toArray("[data-works-project]", section));
       gsap.killTweensOf(
         gsap.utils.toArray("[data-works-project-link]", section),
@@ -638,7 +513,6 @@ export default function Works() {
                 height="100%"
                 minHeight="0"
               />
-              <div className={styles.shaderLayer} aria-hidden="true" />
               {projects.map((project, index) => (
                 <Link
                   key={project.href}

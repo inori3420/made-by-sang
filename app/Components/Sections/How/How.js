@@ -218,7 +218,8 @@ export default function How() {
                 fill
                 sizes="(max-width: 47.9375rem) 40vw, 24vw"
                 className={styles.img}
-                loading="eager"
+                loading="lazy"
+                quality={78}
               />
             </div>
           ))}

@@ -2,6 +2,7 @@ import Hero from "./Components/Sections/Hero/Hero";
 import About from "./Components/Sections/About/About";
 import How from "./Components/Sections/How/How";
 import Works from "./Components/Sections/Works/Works";
+import Footer from "./Components/Sections/Footer/Footer";
 
 export const metadata = {
   title: "Made by Sang",
@@ -16,7 +17,7 @@ export default function Home() {
       <About />
       <How />
       <Works />
-      <section className="h-screen bg-black"></section>
+      <Footer />
     </>
   );
 }

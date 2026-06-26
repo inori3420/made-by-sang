@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./infiniteCanvas.module.css";
 
@@ -321,9 +322,17 @@ export default function InfiniteCanvas({
     <section
       ref={rootRef}
       className={styles.root}
+      data-lenis-prevent
       data-navbar-theme="default"
       aria-label={title}
       aria-describedby="infinite-canvas-description"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onWheel={handleWheel}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
       data-dragging={isDragging ? "true" : "false"}
     >
       <p id="infinite-canvas-description" className={styles.srOnly}>
@@ -338,19 +347,7 @@ export default function InfiniteCanvas({
         <span className={styles.zoom}>{Math.round(camera.zoom * 100)}%</span>
       </div>
 
-      <div
-        className={styles.canvas}
-        data-lenis-prevent
-        role="application"
-        aria-label="Draggable infinite works canvas"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        onWheel={handleWheel}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-      >
+      <div className={styles.canvas} aria-hidden="true">
         <div
           className={styles.world}
           style={{
@@ -369,8 +366,9 @@ export default function InfiniteCanvas({
               const tileSize = Math.ceil(tile.size * camera.zoom);
 
               return (
-                <div
+                <Link
                   key={tile.id}
+                  href={image.href ?? "/works"}
                   className={styles.tile}
                   style={{
                     "--tile-x": `${screenX}px`,
@@ -379,6 +377,7 @@ export default function InfiniteCanvas({
                     "--tile-gap": `${GRID_GAP}px`,
                     "--tile-position": tile.objectPosition,
                   }}
+                  tabIndex={-1}
                 >
                   <Image
                     src={image.src}
@@ -386,7 +385,7 @@ export default function InfiniteCanvas({
                     fill
                     sizes={`calc(100vw / ${GRID_COLUMNS})`}
                   />
-                </div>
+                </Link>
               );
             })
           ) : (

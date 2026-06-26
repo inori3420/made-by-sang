@@ -197,7 +197,9 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 
 - Renders `MADEBY©SANG` through Three.js and a custom shader.
 - The Saans Bold font must finish loading before the canvas texture and reveal animation are created.
+- Cap the WebGL renderer and canvas-texture pixel ratio to avoid oversized GPU memory on high-DPR displays; do not restore uncapped `window.devicePixelRatio` rendering unless explicitly optimizing for a measured quality issue.
 - Preserve renderer, texture, event listener, animation frame, and GSAP cleanup.
+- Dispose generated textures, geometry, materials, renderer resources, animation frames, and resize frames during cleanup.
 - Avoid introducing horizontal seams or duplicate transform sources in the shader/canvas reveal.
 
 ### Meta, Status, and Time
@@ -226,6 +228,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Start the How ScrollTrigger at `top 30%` so the scrubbed stage timeline begins after the section has entered the viewport while still leaving the final sticky beat for the grid transition.
 - `imgGroup` is the How image-frame container; keep it centered in the same absolute stack as the heading, below the heading by z-index, at a `3 / 2` aspect ratio, and reveal it in the scrub timeline after the first heading finishes entering. The reveal must expand from the exact center using a collapsed center `polygon()` clip-path while rotating from `-45deg` to `0deg`, not a bottom/edge-feeling inset wipe.
 - Until Prismic imagery is added, `imgGroup` contains five absolutely stacked local placeholder images from `public/images/how/` that swap instantly once per second in an infinite CSS `steps(1, end)` loop, with a reduced-motion fallback that keeps the first image visible.
+- How imagery is below the initial hero and should lazy-load by default; do not use eager loading for all stacked placeholders.
 - Heading chars should travel by viewport distance (`100vw` / `-100vw`) during swaps instead of per-character `xPercent`, so long headings fully clear before the next phrase enters.
 - After the stage reaches the top, the heading timeline swaps phrases horizontally using each phrase's SplitText chars: current phrase chars exit left first, then the next phrase chars enter from the right to avoid overlap.
 - Keep heading phrase parent spans responsible only for absolute centering; do not animate parent opacity during swaps, because both in and out movement should scrub at the char level.
@@ -243,10 +246,31 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Each Works project segment uses a hold-then-transition rhythm: hold the current project for the first `70vh` of a `100vh` segment, then run the dissolve/image transition during the final `30vh`.
 - The project count is tied to the image's visual completion point, not the very end of the dissolve grid tail: it stays on the current project during the hold and transition, then slides to the next number once the next image is fully revealed; `/total` remains static.
 - The project title, description, metric, and metric caption are stacked panels that update with the completed project index. Titles/metric badges use masked slide replacement; description and metric caption use SplitText line masks with `0.1` stagger.
-- The Works media frame has a scroll-velocity “shader” pass inspired by Codrops ShaderOnScroll: ScrollTrigger velocity updates CSS variables for media translate/skew/scale/blur/saturation plus a scanline/noise overlay, then eases those variables back to neutral when scrolling settles. Keep this effect transform/filter based unless a future request explicitly asks for a full Three.js shader mesh implementation.
+- The Works media frame should not use a scroll-velocity shader, saturation/contrast boost, blur, or screen-blend overlay. Fast scroll must not brighten the project image; keep the image stack visually neutral unless a future request explicitly asks for a full Three.js shader mesh implementation.
 - Hovering or focusing the Works image area fades in a `30%` black media overlay and reveals a centered `3:2` project showcase preview that slides up from inside the media frame with a `rotateX` reveal from `60deg` to `0deg`. Disable and force-hide this showcase during the active dissolve/image transition window; it should only open while a project image is settled. Keep the preview synced to the completed project index and let GSAP own its transform so it can later be replaced with Prismic video/media content.
 - On touch layouts where hover is unavailable, auto-reveal the Works showcase when a project image is settled, including the initial first project state.
 - The Works media frame renders transparent active project links over the image. Only the current completed project link should receive pointer events and keyboard focus; future Prismic data can replace the placeholder `/works/{slug}` hrefs.
+
+### Footer
+
+- `Sections/Footer` is the final inverse CTA section and replaces the temporary black spacer on the home page.
+- `Sections/Footer` is a Client Component because it owns the final scroll reveal; do not pass icon component functions into client children from server parents. `UI/Button` already defaults to the corner arrow icon.
+- Keep the footer wrapped in a semantic section with `data-navbar-theme="inverse"` so the fixed navbar switches to inverse colors while it overlaps the footer.
+- The Footer contains `SignalLandscape` as an absolutely positioned/sticky background layer. Do not render `SignalLandscape` as a standalone section after Footer on the home page.
+- During the final scroll, the footer content panel stays sticky and translates upward with a scrubbed ScrollTrigger to reveal the signal landscape behind it. Cap the reveal distance to a partial viewport amount so the footer stops with its bottom details still visible; do not translate the footer a full `-100%` out of view.
+- Footer navigation must reuse `UI/Navlink` so active route state and hover behavior stay consistent with the rest of the site.
+- The CTA uses `UI/Button` with `mailto:trannhatsang2000@gmail.com`; external social links use Remix `RiArrowRightUpLine` and must include `rel="noreferrer"` when opening in a new tab.
+- Footer contact actions render as a two-column grid of large corner-pixel buttons. Keep “Send Email” linked to the site email; “Call me” can use a call-request mailto until a real phone number is provided.
+- Maintain responsive layouts for desktop, tablet, and mobile: desktop uses CTA/navigation/social columns, tablet moves into two columns under the CTA, and mobile stacks content vertically.
+
+### SignalLandscape
+
+- `Sections/SignalLandscape` renders an inverse Three.js shader canvas with an electric dotted terrain/equalizer look.
+- It can render as a semantic section by default or as a decorative `div` behind Footer via the `as`, `decorative`, `className`, and `navbarTheme` props.
+- Keep the shader lightweight: capped renderer pixel ratio, one points geometry, one material, and no image textures.
+- Animate only while the section is in or near the viewport via `IntersectionObserver`; render a static frame for reduced-motion users.
+- Dispose renderer, geometry, material, animation frames, resize frames, and observers during cleanup.
+- Keep it semantic as a section with `data-navbar-theme="inverse"` and the canvas decorative/`aria-hidden`.
 
 ### GridTransition
 
@@ -261,10 +285,12 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 ### DissolveImageStack
 
 - `UI/DissolveImageStack` is a reusable pinned image-stack transition based on the experimental `Sections/Test` script.
+- `DissolveImageStack` lazy-loads its images by default. Use `priorityFirst` only when the stack is genuinely above the fold on the initial route.
 - Keep all DOM access inside client effects; do not use `window` or `document` at module scope.
-- The component measures its own viewport-sized root, renders deterministic character cells, and uses one scoped ScrollTrigger to scrub image clip-path transitions plus the dissolve grid.
+- The component measures its own viewport-sized root, renders deterministic character cells, and uses one scoped ScrollTrigger to scrub transform-masked image transitions plus the dissolve grid.
 - It can be used standalone as a pinned full-viewport section or as a contained media block by passing `as`, `pin={false}`, `trigger`, `start`, `end`, `height`, and `minHeight`.
 - `segmentHoldRatio` delays each image transition inside its scroll segment; for Works, use `0.7` so each project holds before the dissolve begins.
+- Image reveals use a transform/counter-transform mask (`--dissolve-layer-y` and `--dissolve-image-y`) rather than animated `clip-path`, which avoids thin horizontal seams during fast scrubbed scroll.
 - Clean up with `gsap.context().revert()` and avoid loose global selectors so the component can be mounted for review without leaking ScrollTriggers.
 
 ### InfiniteCanvas
@@ -274,8 +300,7 @@ Simple decorative loops, such as the Status indicator and Time separator blink, 
 - Feed the component a finite `images` array; tile image selection wraps with modulo so future Prismic project data can replace the placeholder array without changing the canvas engine.
 - Pointer drag pans the camera, normal wheel/trackpad pans the canvas, modified wheel/pinch-style input zooms around the cursor, arrow keys pan, and `+` / `-` zoom. Keep inertia inside a single `requestAnimationFrame` loop and clean up the frame on unmount.
 - Press/hold scales and tilts the inner `.world` canvas plane, not the clipped viewport/root. The whole grid plane should skew/rotate from current camera velocity during drag and inertia; keep this as transform-only motion so the seven-column layout does not reflow.
-- Keep pointer, wheel, keyboard, `tabIndex`, and `data-lenis-prevent` on the inner `.canvas`, not the root `<section>`, so fixed persistent UI such as Navbar remains clickable above the page.
-- Placeholder grid tiles are decorative and non-interactive until a real project-detail route or click-to-focus behavior is intentionally added; do not fill the infinite grid with repeated links back to `/works`.
+- Add `data-lenis-prevent` to the interactive canvas root so Locomotive Scroll does not hijack drag/wheel interaction inside the canvas.
 - Keep the route page server-rendered and pass serializable image data into the client canvas component.
 
 ### ScrollText

@@ -41,6 +41,7 @@ export default function DissolveImageStack({
   height = "100svh",
   minHeight = height,
   segmentHoldRatio = 0,
+  priorityFirst = false,
 }) {
   const rootRef = useRef(null);
   const gridRef = useRef(null);
@@ -116,13 +117,12 @@ export default function DissolveImageStack({
       const transitionRange = 1 - transitionStartRatio;
       let activeTransitionIndex = 0;
 
-      stackedImages.forEach((image, index) => {
-        gsap.set(image, {
+      stackedImages.forEach((imageLayer, index) => {
+        imageLayer.style.setProperty("--dissolve-layer-y", "0%");
+        imageLayer.style.setProperty("--dissolve-image-y", "0%");
+
+        gsap.set(imageLayer, {
           zIndex: totalImages - index,
-          clipPath:
-            index < totalTransitions
-              ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-              : "none",
         });
       });
 
@@ -132,7 +132,7 @@ export default function DissolveImageStack({
         gsap.set(dissolveCellElements, { visibility: "hidden" });
       };
 
-      const updateImageClipPaths = (scrollProgress) => {
+      const updateImageMasks = (scrollProgress) => {
         for (let index = 0; index < totalTransitions; index += 1) {
           const segmentStart = index / totalTransitions;
           const segmentEnd = (index + 1) / totalTransitions;
@@ -148,10 +148,16 @@ export default function DissolveImageStack({
           );
           const remappedPosition =
             -spreadAbove + segmentProgress * totalTravelRange;
-          const clipPercent = gsap.utils.clamp(0, 100, remappedPosition * 100);
+          const layerY = gsap.utils.clamp(0, 100, remappedPosition * 100);
 
-          stackedImages[index].style.clipPath =
-            `polygon(0% ${clipPercent}%, 100% ${clipPercent}%, 100% 100%, 0% 100%)`;
+          stackedImages[index].style.setProperty(
+            "--dissolve-layer-y",
+            `${layerY}%`,
+          );
+          stackedImages[index].style.setProperty(
+            "--dissolve-image-y",
+            `${layerY * -1}%`,
+          );
         }
       };
 
@@ -206,9 +212,11 @@ export default function DissolveImageStack({
 
       if (prefersReducedMotion) {
         stackedImages.forEach((image, index) => {
+          image.style.setProperty("--dissolve-layer-y", "0%");
+          image.style.setProperty("--dissolve-image-y", "0%");
+
           gsap.set(image, {
             autoAlpha: index === 0 ? 1 : 0,
-            clearProps: index === 0 ? "clipPath" : "",
           });
         });
         return;
@@ -240,7 +248,7 @@ export default function DissolveImageStack({
           );
 
           activeTransitionIndex = currentTransition;
-          updateImageClipPaths(scrollProgress);
+          updateImageMasks(scrollProgress);
 
           if (transitionProgress <= 0 || transitionProgress >= 1) {
             hideAllDissolveCells();
@@ -294,7 +302,9 @@ export default function DissolveImageStack({
               alt=""
               fill
               sizes={imageSizes}
-              priority={index === 0}
+              priority={priorityFirst && index === 0}
+              loading={priorityFirst && index === 0 ? undefined : "lazy"}
+              quality={82}
               className={styles.image}
             />
           </div>
